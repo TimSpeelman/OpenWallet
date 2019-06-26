@@ -26,6 +26,7 @@ import { FileSizePipe } from './shared/file-size.pipe';
 import { TasksService } from './shared/tasks.service';
 import { ReceiveAttributesComponent } from './attestations/receive-attributes.component';
 import { MessageComponent } from './attestations/message.component';
+import { AttributesService } from './shared/attributes.service';
 
 const routes: Routes = [
     { path: '', redirectTo: 'create', pathMatch: 'full' },
@@ -71,6 +72,7 @@ const routes: Routes = [
         OpenWalletService,
         TasksService,
         IPv8Service,
+        AttributesService,
     ],
     bootstrap: [AppComponent]
 })
