@@ -5,12 +5,12 @@
             <img class="provider-img" src="assets/images/tuid_logo.png" alt="">
             <div class="form-signin">
                 <select [(ngModel)]="selected_provider" class="form-control" required>
-                    <option [ngValue]="undefined" disabled selected>Select your attestation provider</option>
+                    <option [ngValue]="undefined" disabled selected hidden>Select your attestation provider</option>
                     <option *ngFor="let provider of objectValues(walletService.providers)" [ngValue]="provider">
                         {{provider.name}}</option>
                 </select>
                 <select [(ngModel)]="selected_option" class="form-control" required>
-                    <option [ngValue]="undefined" disabled selected>Select your attribute</option>
+                    <option [ngValue]="undefined" disabled selected hidden>Select your attribute</option>
                     <option *ngFor="let option of selected_provider?.options" [ngValue]="option">{{option.name}}
                     </option>
                 </select>

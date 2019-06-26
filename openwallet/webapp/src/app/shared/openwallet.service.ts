@@ -4,11 +4,11 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 
 import { Attestation } from './attestation.model';
-import { Result } from './result.model';
+import { Attribute } from './tasks.service';
 
 @Injectable()
 export class OpenWalletService {
-    private api_base = '/api';
+    private api_base = 'http://localhost:8124/api'; // FIXME
 
     providers = {};
 
@@ -20,6 +20,18 @@ export class OpenWalletService {
                 self.providers[key]['value'] = key;
             });
         });
+    }
+
+    getAttributeRequirements(providerKey: string, attributeName: string): string[] {
+        const provider = this.providers[providerKey];
+        if (!provider) {
+            throw new Error(`No such provider '${provider}'.`);
+        }
+        const option = provider.options.find(a => a.name === attributeName);
+        if (!option) {
+            throw new Error(`No such option '${option}'.`);
+        }
+        return option.requires || [];
     }
 
     getProviders(): Observable<Object[]> {
@@ -48,9 +60,26 @@ export class OpenWalletService {
             .catch(err => Observable.throw(err.json()));
     }
 
-    requestAttestation(attestation_request): Observable<Result> {
-        return this.http.put(this.api_base + '/request-attestation', attestation_request)
-            .map(res => res.json().result)
-            .catch(err => Observable.throw(err.json()));
+    requestAttestation(attestation_request: AttestationRequest): Observable<AttestationResult> {
+        const result: AttestationResult = {
+            attributes: [{ name: 'kvknr', value: '12345678' }],
+            provider: 'kvk',
+            reason: 'YOU ASKED FOR IT',
+        };
+        return Observable.create((subscriber) => setTimeout(() => subscriber.next(result), 1));
+        // return this.http.put(this.api_base + '/request-attestation', attestation_request)
+        //     .map(res => res.json().result)
+        //     .catch(err => Observable.throw(err.json()));
     }
+}
+
+export interface AttestationRequest {
+    provider: string;
+    option: string;
+}
+
+export interface AttestationResult {
+    attributes: Attribute[];
+    provider: string;
+    reason: string;
 }

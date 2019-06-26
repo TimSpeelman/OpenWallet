@@ -1,0 +1,28 @@
+<div class="row">
+    <div class="col-sm-offset-3 col-sm-6 col-md-4 col-md-offset-4">
+        <h1 class="text-center login-title">Do you wish to store these attributes?</h1>
+        <div class="account-wall">
+            <img class="provider-img" src="assets/images/tuid_logo.png" alt="">
+            <div class="form-signin">
+                <div>
+                    <p>{{ providerName }} provides you the following credentials. Reason:</p>
+                    <p>{{ request.reason }}</p>
+                    <ul>
+                        <li *ngFor="let attribute of attributes">
+                            <strong>{{attribute.name}}:</strong> {{attribute.value}}</li>
+                    </ul>
+                </div>
+                <button (click)="confirmRequest()" class="btn btn-lg btn-block sharp openwallet" type="submit"
+                    [disabled]="loading">Add to my Identity</button>
+                <button (click)="denyRequest()" class="btn btn-lg btn-block sharp openwallet" type="submit"
+                    [disabled]="loading">Deny</button>
+            </div>
+            <div *ngIf="loading" class="spinner">
+                <div class="bounce1"></div>
+                <div class="bounce2"></div>
+                <div class="bounce3"></div>
+            </div>
+        </div>
+        <br>
+    </div>
+</div>

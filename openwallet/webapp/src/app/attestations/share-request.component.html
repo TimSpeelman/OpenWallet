@@ -5,16 +5,17 @@
             <img class="provider-img" src="assets/images/tuid_logo.png" alt="">
             <div class="form-signin">
                 <div>
-                    <p>X requests the following credentials for Y.</p>
+                    <p>{{ receiverName }} requests the following credentials. Reason:</p>
+                    <p>{{ request.reason }}</p>
                     <ul>
-                        <li>Name from ItsMe</li>
-                        <li>BSN from ItsMe</li>
+                        <li *ngFor="let attribute of attributes">
+                            <strong>{{attribute.name}}:</strong> {{attribute.value}}</li>
                     </ul>
                 </div>
-                <button (click)="shareRequestedData()" class="btn btn-lg btn-block sharp openwallet" type="submit"
-                    [disabled]="loading || ipv8Service.circuits.length == 0 || ipv8Service.peers.indexOf(selected_provider?.mid) == -1">Share
-                    this
-                    data</button>
+                <button (click)="confirmRequest()" class="btn btn-lg btn-block sharp openwallet" type="submit"
+                    [disabled]="loading">Share this data</button>
+                <button (click)="denyRequest()" class="btn btn-lg btn-block sharp openwallet" type="submit"
+                    [disabled]="loading">Deny</button>
             </div>
             <div *ngIf="loading" class="spinner">
                 <div class="bounce1"></div>
@@ -23,12 +24,5 @@
             </div>
         </div>
         <br>
-        <table class="footer">
-            <tr *ngIf="selected_provider">
-                <td><i class="glyphicon" [ngClass]="ipv8Service.peers.indexOf(selected_provider?.mid) > -1 ?
-                                                    'glyphicon-ok-circle' : 'glyphicon-remove-circle'"></i></td>
-                <td>Trusted party online</td>
-            </tr>
-        </table>
     </div>
 </div>

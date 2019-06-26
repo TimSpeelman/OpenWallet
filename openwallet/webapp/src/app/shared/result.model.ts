@@ -1,8 +1,8 @@
 
-export enum ResultType {
-    Share = 'Share' // procedure requires sharing data
-}
+// export enum ResultType {
+//     Share = 'Share' // procedure requires sharing data
+// }
 
-export interface Result {
-    type: ResultType;
-}
+// export interface Result {
+//     type: ResultType;
+// }

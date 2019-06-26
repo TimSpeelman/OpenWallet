@@ -3,10 +3,10 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Observable, Subject } from 'rxjs/Rx';
 import { takeUntil } from 'rxjs/operators';
 
-import { OpenWalletService } from '../shared/openwallet.service';
+import { OpenWalletService, AttestationRequest } from '../shared/openwallet.service';
 import { IPv8Service } from 'app/shared/ipv8.service';
 import { Attestation } from 'app/shared/attestation.model';
-import { Result, ResultType } from '../shared/result.model';
+import { TasksService } from '../shared/tasks.service';
 
 @Component({
     selector: 'app-create-attestation',
@@ -17,12 +17,13 @@ export class CreateAttestationComponent implements OnInit, OnDestroy {
     loading;
     error_msg;
 
-    request = {};
+    request: AttestationRequest = null;
     selected_provider;
     selected_option;
     ngUnsubscribe = new Subject();
 
     constructor(private walletService: OpenWalletService,
+        private tasksService: TasksService,
         private ipv8Service: IPv8Service) { }
 
     ngOnInit() {
@@ -33,33 +34,33 @@ export class CreateAttestationComponent implements OnInit, OnDestroy {
             this.error_msg = 'Make sure you fill in all the fields.';
             return;
         }
-        this.request['provider'] = this.selected_provider.value;
-        this.request['option'] = this.selected_option.name;
+
+        const provider = this.selected_provider.value;
+        const option = this.selected_option.name;
 
         this.loading = true;
 
-        this.walletService.requestAttestation(this.request)
-            // .pipe(takeUntil(this.ngUnsubscribe))
-            .subscribe(result => {
-                this.loading = false;
-                this.handleResult(result);
-            },
-                err => {
-                    this.loading = false;
-                    this.error_msg = err.error ? err.error : 'Could not contact server.';
-                });
+        this.tasksService.requestAttribute(provider, option);
+        // .subscribe(result => {
+        //     this.loading = false;
+        //     this.handleResult(result);
+        // },
+
+        // this.walletService.requestAttestation(this.request)
+        //     // .pipe(takeUntil(this.ngUnsubscribe))
+        //     .subscribe(result => {
+        //         this.loading = false;
+        //         this.handleResult(result);
+        //     },
+        //         err => {
+        //             this.loading = false;
+        //             this.error_msg = err.error ? err.error : 'Could not contact server.';
+        //         });
     }
 
     ngOnDestroy() {
         this.ngUnsubscribe.next();
         this.ngUnsubscribe.complete();
-    }
-
-    handleResult(result: Result) {
-        switch (result.type) {
-            case ResultType.Share:
-                window.location.assign('share-request');
-        }
     }
 
     sendToIPv8(attestation, peers) {

@@ -23,12 +23,17 @@ import { ViewQRCodeComponent } from './attestations/view-qrcode.component';
 import { ViewVerificationsComponent } from './verifications/view-verifications.component';
 import { DebugOverviewComponent } from './debug/debug-overview.component';
 import { FileSizePipe } from './shared/file-size.pipe';
+import { TasksService } from './shared/tasks.service';
+import { ReceiveAttributesComponent } from './attestations/receive-attributes.component';
+import { MessageComponent } from './attestations/message.component';
 
 const routes: Routes = [
     { path: '', redirectTo: 'create', pathMatch: 'full' },
     { path: 'create', component: CreateAttestationComponent },
     { path: 'attestations', component: ViewAttestationsComponent },
+    { path: 'message', component: MessageComponent },
     { path: 'share-request', component: ShareRequestComponent },
+    { path: 'receive-attributes', component: ReceiveAttributesComponent },
     { path: 'attestations/:id', component: ViewAttestationComponent },
     { path: 'attestations/:id/qrcode', component: ViewQRCodeComponent },
     { path: 'verifications', component: ViewVerificationsComponent },
@@ -40,7 +45,9 @@ const routes: Routes = [
         AppComponent,
         CreateAttestationComponent,
         ShareRequestComponent,
+        ReceiveAttributesComponent,
         ViewAttestationComponent,
+        MessageComponent,
         ViewAttestationsComponent,
         ViewQRCodeComponent,
         ViewVerificationsComponent,
@@ -62,6 +69,7 @@ const routes: Routes = [
     providers: [Location,
         { provide: LocationStrategy, useClass: HashLocationStrategy },
         OpenWalletService,
+        TasksService,
         IPv8Service,
     ],
     bootstrap: [AppComponent]

@@ -7,7 +7,7 @@ declare var sha1: any;
 
 @Injectable()
 export class IPv8Service {
-    private _api_base = '';
+    private _api_base = 'http://localhost:8124';
 
     peers = [];
     circuits = [];
@@ -28,11 +28,11 @@ export class IPv8Service {
 
     connectPeer(mid_hex): Observable<Object[]> {
         return this.http.get(this._api_base + `/dht/peers/${mid_hex}`)
-        .map(res => res.json().peers);
+            .map(res => res.json().peers);
     }
     getOverlays(): Observable<Object[]> {
         return this.http.get(this._api_base + '/overlays')
-        .map(res => res.json().overlays);
+            .map(res => res.json().overlays);
     }
     getOverlay(overlay_name): Observable<Object> {
         return this.getOverlays()
@@ -43,27 +43,27 @@ export class IPv8Service {
     }
     getCircuits(): Observable<Object> {
         return this.http.get(this._api_base + '/tunnel/circuits')
-        .map(res => res.json().circuits.filter((circuit: any) => circuit.state === 'READY'));
+            .map(res => res.json().circuits.filter((circuit: any) => circuit.state === 'READY'));
     }
     getDHTStats(): Observable<Object> {
         return this.http.get(this._api_base + '/dht/statistics')
-        .map(res => res.json().statistics);
+            .map(res => res.json().statistics);
     }
     getRecentBlocks(): Observable<Object> {
         return this.http.get(this._api_base + '/trustchain/recent')
-        .map(res => res.json().blocks);
+            .map(res => res.json().blocks);
     }
 
     publicKeyToMidArray(pk_hex: string) {
-        const pk_arr = pk_hex.match(/\w{2}/g).map(function (a) { return parseInt(a, 16) });
+        const pk_arr = pk_hex.match(/\w{2}/g).map(function (a) { return parseInt(a, 16); });
         return sha1(pk_arr).match(/\w{2}/g).map(function (a) { return parseInt(a, 16); });
     }
 
     publicKeyToMid(pk_hex: string): string {
         const mid_arr = this.publicKeyToMidArray(pk_hex);
-        return Array.from(mid_arr, function(byte: any) {
+        return Array.from(mid_arr, function (byte: any) {
             return ('0' + (byte & 0xFF).toString(16)).slice(-2);
-        }).join('')
+        }).join('');
     }
 
     publicKeyToMid64(pk_hex: string) {
@@ -72,7 +72,7 @@ export class IPv8Service {
     }
 
     hashToB64(hash_hex: string) {
-        const hash_arr = hash_hex.match(/\w{2}/g).map(function (a) { return parseInt(a, 16) });
+        const hash_arr = hash_hex.match(/\w{2}/g).map(function (a) { return parseInt(a, 16); });
         return btoa(String.fromCharCode.apply(null, hash_arr));
     }
 
