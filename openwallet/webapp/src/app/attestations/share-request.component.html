@@ -1,0 +1,34 @@
+<div class="row">
+    <div class="col-sm-offset-3 col-sm-6 col-md-4 col-md-offset-4">
+        <h1 class="text-center login-title">Do you wish to share these attributes?</h1>
+        <div class="account-wall">
+            <img class="provider-img" src="assets/images/tuid_logo.png" alt="">
+            <div class="form-signin">
+                <div>
+                    <p>X requests the following credentials for Y.</p>
+                    <ul>
+                        <li>Name from ItsMe</li>
+                        <li>BSN from ItsMe</li>
+                    </ul>
+                </div>
+                <button (click)="shareRequestedData()" class="btn btn-lg btn-block sharp openwallet" type="submit"
+                    [disabled]="loading || ipv8Service.circuits.length == 0 || ipv8Service.peers.indexOf(selected_provider?.mid) == -1">Share
+                    this
+                    data</button>
+            </div>
+            <div *ngIf="loading" class="spinner">
+                <div class="bounce1"></div>
+                <div class="bounce2"></div>
+                <div class="bounce3"></div>
+            </div>
+        </div>
+        <br>
+        <table class="footer">
+            <tr *ngIf="selected_provider">
+                <td><i class="glyphicon" [ngClass]="ipv8Service.peers.indexOf(selected_provider?.mid) > -1 ?
+                                                    'glyphicon-ok-circle' : 'glyphicon-remove-circle'"></i></td>
+                <td>Trusted party online</td>
+            </tr>
+        </table>
+    </div>
+</div>

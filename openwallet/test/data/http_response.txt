@@ -1,0 +1,51 @@
+HTTP/1.1 200 OK
+Date: Tue, 30 Oct 2018 17:51:54 GMT
+Content-Type: text/html; charset=utf-8
+Vary: Accept-Encoding
+X-Powered-By: Express
+x-cloud-trace-context: 00000000000000000000000000000000/0000000000000000000;o=0
+Access-Control-Allow-Origin: *
+Via: 1.1 google
+Content-Length: 1414
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>IP Echo Service</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="keywords" content="IP, What, IP, Address, External, What Is My IP">
+    <link rel="canonical" href="https://ipinfo.io/">
+    
+    <link href="style.css" rel="stylesheet" type="text/css">
+    
+</head>
+<body>
+
+<main>
+<div style="text-align: center; flex: 1; ">
+    <h1>Your IP is x.x.x.x</h1>
+    <br>
+
+    If you're looking for your local IP address, then you probably need to visit <a href="/localip.html">this page</a>.<br>
+    On <a href="/extra">this page</a> you can find out what the server knows about you.<br>
+    <br>
+    Developers should click <a href="/developers.html">here</a>.
+
+    <br><br><br>
+
+    <!-- FB Button -->
+    <div id="fb-root"></div>
+    <script>(function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
+
+    <div class="fb-like" data-href="http://ipecho.net/" data-send="true" data-layout="button_count" data-width="150" data-show-faces="false"></div>
+</div>
+</main>
+
+</body>
+</html>

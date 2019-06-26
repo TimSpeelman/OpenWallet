@@ -1,0 +1,63 @@
+<header class="masthead hidden-xs">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-6">
+                <h2><a href="#">OpenWallet</a></h2>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Static navbar -->
+<nav class="navbar navbar-default navbar-static-top">
+    <div class="container">
+        <div class="navbar-header">
+            <a *ngIf="location.path().startsWith('/attestations/')" class="back visible-xs"
+                (click)="location.back()"><span class="glyphicon glyphicon-arrow-left"></span></a>
+            <button type="button" class="navbar-toggle collapsed" (click)="isCollapsed = !isCollapsed"
+                aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse" [collapse]="isCollapsed">
+            <ul class="nav navbar-nav">
+                <li [routerLinkActive]="['active']"><a [routerLink]="['./create']"
+                        (click)="isCollapsed = true">Create</a></li>
+                <li [routerLinkActive]="['active']"><a [routerLink]="['./attestations']"
+                        (click)="isCollapsed = true">View</a></li>
+                <li [routerLinkActive]="['active']"><a [routerLink]="['./verifications']"
+                        (click)="isCollapsed = true">Verify</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+            </ul>
+        </div>
+        <!--/.nav-collapse -->
+    </div>
+</nav>
+
+<div class="container">
+    <router-outlet></router-outlet>
+    <div class="row">
+        <div class="col-md-4 col-md-offset-4">
+            <table class="footer" (dblclick)="router.navigate(['./debug'])">
+                <tr *ngIf="selected_provider">
+                    <td><i class="glyphicon" [ngClass]="ipv8Service.peers.indexOf(selected_provider?.mid) > -1 ?
+                                                        'glyphicon-ok-circle' : 'glyphicon-remove-circle'"></i></td>
+                    <td>Trusted party online</td>
+                </tr>
+                <tr>
+                    <td><i class="glyphicon" [ngClass]="ipv8Service.circuits.length > 0 ?
+                                                        'glyphicon-ok-circle' : 'glyphicon-remove-circle'"></i></td>
+                    <td>Connectable</td>
+                </tr>
+                <tr>
+                    <td>{{ ipv8Service.peers.length }}</td>
+                    <td>Peers online</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>

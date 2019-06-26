@@ -1,0 +1,93 @@
+small {
+    font-size: x-small;
+}
+
+.navbar-default {
+    background-color: #e17000;
+    border-color: #f6d4b2;
+}
+.navbar-default .navbar-brand {
+    color: #000000;
+}
+.navbar-default .navbar-brand:hover,
+.navbar-default .navbar-brand:focus {
+    color: #000000;
+}
+.navbar-default .navbar-text {
+    color: #000000;
+}
+.navbar-default .navbar-nav > li > a {
+    color: #000000;
+}
+.navbar-default .navbar-nav > li > a:hover,
+.navbar-default .navbar-nav > li > a:focus {
+    color: #000000;
+}
+.navbar-default .navbar-nav > .active > a,
+.navbar-default .navbar-nav > .active > a:hover,
+.navbar-default .navbar-nav > .active > a:focus {
+    color: #000000;
+    background-color: #f6d4b2;
+}
+.navbar-default .navbar-nav > .open > a,
+.navbar-default .navbar-nav > .open > a:hover,
+.navbar-default .navbar-nav > .open > a:focus {
+    color: #000000;
+    background-color: #f6d4b2;
+}
+.navbar-default .navbar-toggle {
+    border-color: #f6d4b2;
+}
+.navbar-default .navbar-toggle:hover,
+.navbar-default .navbar-toggle:focus {
+    background-color: #f6d4b2;
+}
+.navbar-default .navbar-toggle .icon-bar {
+    background-color: #000000;
+}
+.navbar-default .navbar-collapse,
+.navbar-default .navbar-form {
+    border-color: #000000;
+}
+.navbar-default .navbar-link {
+    color: #000000;
+}
+.navbar-default .navbar-link:hover {
+    color: #000000;
+}
+
+.navbar-default {
+    border-top: 10px solid #123552;
+}
+
+@media (max-width: 767px) {
+    .navbar-default .navbar-nav .open .dropdown-menu > li > a {
+        color: #000000;
+    }
+    .navbar-default .navbar-nav .open .dropdown-menu > li > a:hover,
+    .navbar-default .navbar-nav .open .dropdown-menu > li > a:focus {
+        color: #000000;
+    }
+    .navbar-default .navbar-nav .open .dropdown-menu > .active > a,
+    .navbar-default .navbar-nav .open .dropdown-menu > .active > a:hover,
+    .navbar-default .navbar-nav .open .dropdown-menu > .active > a:focus {
+        color: #000000;
+        background-color: #f6d4b2;
+    }
+}
+
+a {
+    color: #123552;
+    text-decoration: none;
+}
+.back {
+    margin-top: 12px;
+    margin-left: 10px;
+    font-size: 20px;
+    display: inline-block;
+}
+@media (max-width: 767px) {
+    .visible-xs {
+        display: inline-block !important;
+    }
+}

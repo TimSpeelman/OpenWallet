@@ -1,0 +1,1 @@
+python2 openwallet\run_client.py --ip 127.0.0.1 --port 8124 --proxy_url https://127.0.0.1:8123 --proxy_cert cert.crt --ipv8

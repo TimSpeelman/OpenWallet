@@ -1,0 +1,9 @@
+.tab-pane {
+    margin-top: 10px;
+}
+.nav-tabs > li {
+    cursor: pointer;
+}
+.tab-pane {
+    overflow: auto;
+}

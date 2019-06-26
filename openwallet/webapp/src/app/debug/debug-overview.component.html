@@ -1,0 +1,140 @@
+<ul class="nav nav-tabs">
+    <li [ngClass]="tab === 'overlays' ? 'active' : ''"><a (click)="tab='overlays'">Overlays</a></li>
+    <li [ngClass]="tab === 'peers' ? 'active' : ''"><a (click)="tab='peers'">Peers</a></li>
+    <li [ngClass]="tab === 'blocks' ? 'active' : ''"><a (click)="tab='blocks'">Blocks</a></li>
+    <li [ngClass]="tab === 'circuits' ? 'active' : ''"><a (click)="tab='circuits'">Circuits</a></li>
+    <li [ngClass]="tab === 'dht' ? 'active' : ''"><a (click)="tab='dht'">DHT</a></li>
+</ul>
+
+<div *ngIf="tab === 'overlays'" class="tab-pane fade in active">
+    <table *ngIf="overlays.length > 0" class="table table-hover">
+        <thead>
+            <tr>
+                <td>Name</td>
+                <td>Peers</td>
+                <td>ID</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let overlay of overlays; trackBy: overlay_name">
+                <td>{{ overlay.overlay_name }}</td>
+                <td>{{ overlay.peers.length }}</td>
+                <td>{{ ipv8Service.publicKeyToMid64(overlay.master_peer) }}</td>
+            </tr>
+        </tbody>
+    </table>
+    <p *ngIf="overlays.length == 0">No overlays available</p>
+</div>
+
+<div *ngIf="tab === 'peers'" class="tab-pane fade in">
+    <table *ngIf="peers.length > 0" class="table table-hover">
+        <thead>
+            <tr>
+                <td>IP</td>
+                <td>Port</td>
+                <td>ID</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let peer of peers; trackBy: mid">
+                <td>{{ peer.ip }}</td>
+                <td>{{ peer.port }}</td>
+                <td>{{ peer.mid }}</td>
+            </tr>
+        </tbody>
+    </table>
+    <p *ngIf="peers.length == 0">No peers available</p>
+</div>
+
+<div *ngIf="tab === 'blocks'" class="tab-pane fade in">
+    <table *ngIf="blocks.length > 0" class="table table-hover">
+        <thead>
+            <tr>
+                <td nowrap>Attribute hash</td>
+                <td nowrap>Attribute name</td>
+                <td nowrap>Creation time</td>
+                <td nowrap>Link Mid</td>
+                <td nowrap>Signature</td>
+                <td nowrap>Block hash</td>
+                <td nowrap>Previous block hash</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let block of blocks; trackBy: hash">
+                <td nowrap>{{ block.transaction.hash && ipv8Service.hashToB64(block.transaction.hash) }}</td>
+                <td nowrap>{{ block.transaction.name }}</td>
+                <td nowrap>{{ block.transaction.date * 1000 | date:'yyyy-MM-dd HH:mm:ss Z' | timeAgo }}</td>
+                <td nowrap>{{ ipv8Service.publicKeyToMid64(block.link_public_key) }}</td>
+                <td nowrap>{{ ipv8Service.hashToB64(block.signature) }}</td>
+                <td nowrap>{{ ipv8Service.hashToB64(block.hash) }}</td>
+                <td nowrap>{{ ipv8Service.hashToB64(block.previous_hash) }}</td>
+            </tr>
+        </tbody>
+    </table>
+    <p *ngIf="blocks.length == 0">No blocks available</p>
+</div>
+
+<div *ngIf="tab === 'circuits'" class="tab-pane fade in">
+    <table *ngIf="ipv8Service.circuits.length > 0" class="table table-hover">
+        <thead>
+            <tr>
+                <td>Type</td>
+                <td>State</td>
+                <td>Hops</td>
+                <td>Bytes&uarr;</td>
+                <td>Bytes&darr;</td>
+                <td>ID</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let circuit of ipv8Service.circuits; trackBy: circuit_id">
+                <td>{{ circuit.type }}</td>
+                <td>{{ circuit.state }}</td>
+                <td>{{ circuit.goal_hops }}</td>
+                <td nowrap>{{ circuit.bytes_up | fileSize : '0' }}</td>
+                <td nowrap>{{ circuit.bytes_down | fileSize : '0' }}</td>
+                <td>{{ circuit.circuit_id }}</td>
+            </tr>
+        </tbody>
+    </table>
+    <p *ngIf="ipv8Service.circuits.length == 0">No circuits available</p>
+</div>
+
+<div *ngIf="tab === 'dht'" class="tab-pane fade in">
+    <table *ngIf="dht" class="table table-hover">
+        <thead>
+            <tr>
+                <td>Property</td>
+                <td>Value</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td nowrap>Routing table buckets</td>
+                <td>{{ dht.routing_table_buckets }}</td>
+            </tr>
+            <tr>
+                <td nowrap>Routing table size</td>
+                <td>{{ dht.routing_table_size }}</td>
+            </tr>
+            <tr>
+                <td nowrap>Keys in store</td>
+                <td>{{ dht.num_keys_in_store }}</td>
+            </tr>
+            <tr>
+                <td nowrap>Tokens</td>
+                <td>{{ dht.num_tokens }}</td>
+            </tr>
+            <tr>
+                <td nowrap>Peers storing me</td>
+                <td nowrap>{{ dhtNumStoreForMe() }}</td>
+            </tr>
+            <tr>
+                <td nowrap>Storing peers</td>
+                <td>{{ dhtNumPeersInStore() | json }}</td>
+            </tr>
+        </tbody>
+    </table>
+    <p *ngIf="!dht">DHT is not available</p>
+</div>
+<br>

@@ -1,0 +1,28 @@
+div {
+    font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+.row {
+    margin: 2px 0;
+}
+.text {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    padding: 0px;
+}
+a.disabled {
+    text-decoration: none;
+    color: #333333;
+    pointer-events: none;
+}
+.panel-body {
+    background: #f8f8f8;
+}
+.glyphicon {
+    font-size: 24px;
+    padding: 2px;
+}
+.col-xs-1,
+.col-xs-11 {
+    padding: 0px;
+}

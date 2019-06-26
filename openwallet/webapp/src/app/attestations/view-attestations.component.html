@@ -1,0 +1,52 @@
+<div *ngFor="let attestation of attestations; trackBy: trackByConnID">
+    <div class="panel panel-default bg-light">
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-xs-11">
+                    <div class="row">
+                        <div class="col-xs-5 text">Issuer</div>
+                        <div class="col-xs-7 text">{{ attestation.provider }}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-5 text">Attribute Name</div>
+                        <div class="col-xs-7 text">{{ attestation.option }}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-5 text">Attribute Value</div>
+                        <div class="col-xs-7 text">{{ attestation.results[1] }}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-5 text">Time</div>
+                        <div class="col-xs-7 text">
+                            {{ attestation.time * 1000 | date:'yyyy-MM-dd HH:mm:ss Z' | timeAgo}}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-5 text">Status</div>
+                        <div class="col-xs-7 text">
+                            <span *ngIf="attributes[attestation.connection_id]" class="label label-success">completed</span>
+                            <span *ngIf="!attributes[attestation.connection_id]" class="label label-danger">pending</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-1">
+                    <div class="row">
+                        <a [routerLink]="[encodeURIComponent(attestation.connection_id) + '/qrcode']">
+                            <span class="glyphicon glyphicon-qrcode pull-right"></span>
+                        </a>
+                    </div>
+                    <div class="row">
+                        <a [routerLink]="[encodeURIComponent(attestation.connection_id)]">
+                            <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                        </a>
+                    </div>
+                    <div class="row">
+                        <a (click)="delete($event, attestation)">
+                            <span class="glyphicon glyphicon-trash pull-right"></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

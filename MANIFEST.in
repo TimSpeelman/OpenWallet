@@ -1,0 +1,8 @@
+include LICENSE README.md requirements.txt
+global-exclude .git
+global-exclude node_modules
+recursive-exclude * *.pem
+recursive-exclude * *.har
+recursive-exclude * *.bat
+prune openwallet/test
+include openwallet/cacert.pem

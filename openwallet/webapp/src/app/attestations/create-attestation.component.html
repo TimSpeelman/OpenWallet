@@ -1,0 +1,34 @@
+<div class="row">
+    <div class="col-sm-offset-3 col-sm-6 col-md-4 col-md-offset-4">
+        <h1 class="text-center login-title">Create a new attestation below</h1>
+        <div class="account-wall">
+            <img class="provider-img" src="assets/images/tuid_logo.png" alt="">
+            <div class="form-signin">
+                <select [(ngModel)]="selected_provider" class="form-control" required>
+                    <option [ngValue]="undefined" disabled selected>Select your attestation provider</option>
+                    <option *ngFor="let provider of objectValues(walletService.providers)" [ngValue]="provider">
+                        {{provider.name}}</option>
+                </select>
+                <select [(ngModel)]="selected_option" class="form-control" required>
+                    <option [ngValue]="undefined" disabled selected>Select your attribute</option>
+                    <option *ngFor="let option of selected_provider?.options" [ngValue]="option">{{option.name}}
+                    </option>
+                </select>
+                <button (click)="requestAttestation()" class="btn btn-lg btn-block sharp openwallet" type="submit"
+                    [disabled]="loading">Request attribute</button>
+            </div>
+            <div *ngIf="loading" class="spinner">
+                <div class="bounce1"></div>
+                <div class="bounce2"></div>
+                <div class="bounce3"></div>
+            </div>
+        </div>
+        <br>
+        <div *ngIf="error_msg == ''" class="alert alert-success">
+            <strong>Attestation successfully created!</strong> Go to the view tab to view all of your attestations.
+        </div>
+        <div *ngIf="error_msg" class="alert alert-danger">
+            <strong>Error while creating attestation!</strong> {{ error_msg }}
+        </div>
+    </div>
+</div>

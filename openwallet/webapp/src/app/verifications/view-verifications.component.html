@@ -1,0 +1,35 @@
+<div class="row text-center">
+    <a id="launch">
+        <span class="glyphicon glyphicon-plus"></span>
+    </a>
+</div>
+
+<div *ngFor="let verification of verifications; let i = index">
+    <div class="panel panel-default bg-light" id="verification">
+        <div class="panel-body">
+            <div class="row">
+                <button type="button" class="close" (click)="verifications.splice(i, 1)">
+                    <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+                </button>
+            </div>
+            <div class="row">
+                <div class="col-xs-5 text">Peer mid</div>
+                <div class="col-xs-7 text">{{ verification.mid }}</div>
+            </div>
+            <div *ngIf="verification.attribute_name" class="row">
+                <div class="col-xs-5 text">Attribute name</div>
+                <div class="col-xs-7 text">{{ verification.attribute_name }}</div>
+            </div>
+            <div class="row">
+                <div class="col-xs-5 text">Attribute hash</div>
+                <div class="col-xs-7 text">{{ verification.attribute_hash }}</div>
+            </div>
+            <div class="row" *ngFor="let value_arr of verification.values; let i = index">
+                <div class="col-xs-5 text">Attribute value {{ i + 1 }}</div>
+                <div class="col-xs-7 text">
+                    <p class="text-muted"><small>{{ value_arr[1] | percent:'1.1-1' }}</small> {{ extractValue(value_arr[0]) }}</p></div>
+            </div>
+        </div>
+    </div>
+</div>
+<br>

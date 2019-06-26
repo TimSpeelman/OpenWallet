@@ -1,0 +1,52 @@
+<div *ngIf="attestation != undefined">
+    <div class="row">
+        <div class="col-xs-12 text">
+            <h4>Attestation {{ attestation.connection_id }}</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-5 text">Regex request</div>
+        <div class="col-xs-7 text">{{ attestation.regexes[0][1] }}</div>
+    </div>
+    <div class="row">
+        <div class="col-xs-5 text">Regex response</div>
+        <div class="col-xs-7 text">{{ attestation.regexes[1][1] }}</div>
+    </div>
+    <div class="row">
+        <div class="col-xs-5 text">Attribute request</div>
+        <div class="col-xs-7 text">{{ attestation.results[0] }}</div>
+    </div>
+    <div class="row">
+        <div class="col-xs-5 text">Attribute response</div>
+        <div class="col-xs-7 text">{{ attestation.results[1] }}</div>
+    </div>
+    <!-- <div class="row">
+        <div class="col-xs-5 text">Signature</div>
+        <div class="col-xs-7 text">{{ attestation.sig }}</div>
+    </div>
+    <div class="row">
+        <div class="col-xs-5 text">Public key</div>
+        <div class="col-xs-7 text link">{{ attestation.public_key }}</div>
+    </div> -->
+    <div class="row">
+        <div class="col-xs-5 text">Remote address</div>
+        <div class="col-xs-7 text">{{ attestation.server[0] }}:{{ attestation.server[1] }}</div>
+    </div>
+    <div class="row">
+        <div class="col-xs-5 text">Timestamp</div>
+        <div class="col-xs-7 text">{{ attestation.time * 1000 | date:'dd-MM-yyyy HH:mm:ss Z' }}</div>
+    </div>
+    <div *ngIf="attribute" class="row">
+        <div class="col-xs-5 text">Attribute name</div>
+        <div class="col-xs-7 text">{{ attribute[0] }}</div>
+    </div>
+    <div *ngIf="attribute" class="row">
+        <div class="col-xs-5 text">Attribute hash</div>
+        <div class="col-xs-7 text">{{ attribute[1] }}</div>
+    </div>
+    <div *ngIf="attribute" class="row">
+        <div class="col-xs-5 text">Peer</div>
+        <div class="col-xs-7 text">{{ attribute[3] }}</div>
+    </div>
+</div>
+<br>
