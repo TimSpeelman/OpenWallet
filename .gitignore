@@ -109,3 +109,8 @@ node_modules
 
 .project
 .pydevproject
+
+sqlite/
+openwallet.json
+*.pem
+*.crt
