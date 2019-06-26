@@ -169,9 +169,11 @@ export class TasksService {
         }
 
         this.receiveRequests = this.receiveRequests.filter(r => r === req);
-        req.done(accept);
         if (accept) {
-            this.showMessage('The attributes were successfully added to your identity.');
+            this.walletService.storeAttestation(req).subscribe(
+                () => this.showMessage('The attributes were successfully added to your identity.'),
+                (err) => this.showMessage('Something went wrong: ' + err)
+            );
         } else {
             this.showMessage('The attributes were not added to your identity.');
         }

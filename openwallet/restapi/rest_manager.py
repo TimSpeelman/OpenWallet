@@ -9,7 +9,6 @@ from twisted.web import server, http
 from openwallet.restapi.root_endpoint import RootEndpoint
 
 
-
 class RESTManager(object):
     """
     This class is responsible for managing the startup and closing of the HTTP API.
@@ -50,6 +49,8 @@ class RESTRequest(server.Request):
         server.Request.__init__(self, *args, **kw)
         self._logger = logging.getLogger(self.__class__.__name__)
         self.setHeader('Access-Control-Allow-Origin', '*')
+        self.setHeader('Access-Control-Allow-Methods',
+                       'POST, GET, OPTIONS, DELETE, PUT')
 
     def processingFailed(self, failure):
         self._logger.exception(failure)
@@ -61,7 +62,8 @@ class RESTRequest(server.Request):
             }
         }
         if self.site.displayTracebacks:
-            response[u"error"][u"trace"] = format_tb(failure.getTracebackObject())
+            response[u"error"][u"trace"] = format_tb(
+                failure.getTracebackObject())
 
         body = json.dumps(response)
         self.setResponseCode(http.INTERNAL_SERVER_ERROR)

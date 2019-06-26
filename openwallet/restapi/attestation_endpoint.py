@@ -20,7 +20,14 @@ class AttestationEndpoint(resource.Resource):
         self.logger = logging.getLogger(self.__class__.__name__)
         self.providers = providers
         self.db = TinyDB('openwallet.json').table('attestation')
-        
+
+    # FIXME Hacky because developing on different domains
+    def render_OPTIONS(self, request):
+        request.setHeader('Access-Control-Allow-Methods',
+                          'POST, GET, OPTIONS, DELETE, PUT')
+        request.setHeader('Access-Control-Allow-Headers', 'content-type')
+        return json.dumps({"fine": "fine"})
+
     def render_PUT(self, request):
         parameters = json.loads(request.content.read())
         required_fields = ['provider', 'option']
@@ -28,45 +35,32 @@ class AttestationEndpoint(resource.Resource):
             if field not in parameters:
                 request.setResponseCode(http.BAD_REQUEST)
                 return json.dumps({"error": "missing %s parameter" % field})
-                
+
         provider_name = parameters['provider']
         option_name = parameters['option']
-        
+
         if provider_name not in PROVIDERS:
             request.setResponseCode(http.BAD_REQUEST)
             return json.dumps({"error": "unknown provider " + provider_name})
 
-        option = next((o for o in PROVIDERS[provider_name]['options'] if o['name'] == option_name), None)
+        option = next(
+            (o for o in PROVIDERS[provider_name]['options'] if o['name'] == option_name), None)
         if not option:
             request.setResponseCode(http.BAD_REQUEST)
             return json.dumps({"error": "unknown option " + option_name})
 
-        provider = self.providers[provider_name]
-        response = provider.get_attestation_page(username, password, option['url'])
-        if response.status_code != 200:
-            request.setResponseCode(http.UNAUTHORIZED)
-            return json.dumps({"error": "failed to logging to " + provider_name})
-            
-        conn_id = response.proxy_headers['Connection-ID']
-        keys = (response.read_key, response.read_nonce,
-                response.write_key, response.write_nonce)
-        attest_dict, attest_sig = provider.request_signature(conn_id, keys, option['regexes'])
-        if not attest_sig:
-            request.setResponseCode(http.INTERNAL_SERVER_ERROR)
-            attest_dict['success'] = False
-            return json.dumps(attest_dict)
+        # FIXME Mocked attestation
+        attestation = {
+            "boo": "hoo",
+            "sig": "sig?",
+            "attributes": [{"name": option_name, "value": "123kvknr"}],
+            "provider": provider_name,
+            "reason": "You asked"
+        }
 
-        # Remove previous attestation (if any)
-        self.db.remove(where('provider') == provider_name and \
-                       where('option') == option_name)
-
-        attest_dict['sig'] = base64.b64encode(attest_sig)
-        attest_dict['provider'] = provider_name
-        attest_dict['option'] = option_name
-        self.db.insert(attest_dict)
         return json.dumps({"success": True,
-                           "attestation": attest_dict})
-        
+                           "attestation": attestation})
+
     def render_GET(self, request):
         return json.dumps({"attestations": self.db.all()})
 
@@ -82,7 +76,8 @@ class SpecificAttestationEndpoint(resource.Resource):
         self.db = db
 
     def render_GET(self, request):
-        attestation = self.db.get(where('connection_id') == self.attestation_id)
+        attestation = self.db.get(
+            where('connection_id') == self.attestation_id)
         if not attestation:
             request.setResponseCode(http.NOT_FOUND)
             return json.dumps({"error": "unknown attestation"})
