@@ -104,7 +104,7 @@ export class IPv8Service {
         return this.http.get(this._api_base + '/attestation?type=verification_output')
             .map(res => res.json());
     }
-    sendAttestationRequest(attestation_request): Observable<number> {
+    sendAttestationRequest(attestation_request: IPv8AttestationRequest): Observable<number> {
         const mid = encodeURIComponent(attestation_request.mid);
         const name = attestation_request.attribute_name;
         const metadata = encodeURIComponent(attestation_request.metadata);
@@ -118,4 +118,15 @@ export class IPv8Service {
         return this.http.post(this._api_base + `/attestation?type=verify&mid=${mid}&attribute_hash=${hash}&attribute_values=${value}`, '')
             .map(res => res.status);
     }
+}
+
+export interface IPv8AttestationRequest {
+    mid: string;
+    attribute_name: string;
+    metadata: string;
+}
+
+export interface IPv8AttestationMetadata {
+    provider: string;
+    option: string;
 }

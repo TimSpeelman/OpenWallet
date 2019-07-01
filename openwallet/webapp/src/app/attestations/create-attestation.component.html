@@ -30,5 +30,10 @@
         <div *ngIf="error_msg" class="alert alert-danger">
             <strong>Error while creating attestation!</strong> {{ error_msg }}
         </div>
+        <tr *ngIf="selected_provider">
+            <td><i class="glyphicon" [ngClass]="providerOnline() > -1 ?
+                                                'glyphicon-ok-circle' : 'glyphicon-remove-circle'"></i></td>
+            <td>Trusted party online</td>
+        </tr>        
     </div>
 </div>

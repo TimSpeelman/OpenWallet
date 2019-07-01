@@ -1,12 +1,16 @@
 import { Injectable } from '@angular/core';
 import { OpenWalletService } from './openwallet.service';
 import { Observable } from 'rxjs';
-
+import { IPv8Service, IPv8AttestationRequest } from './ipv8.service';
+import * as uuid from 'uuid/v4';
+import { KVK_MID } from './defs';
 
 let i = 0;
 function newUUID() {
     return `${i++}`;
 }
+
+// const KVK_MID = 'MJGqSI4uvNBvAIWHzu0znphP/DY=>'; // FIXME
 
 const SHARE_PAGE = '#/share-request';
 const RECEIVE_PAGE = '#/receive-attributes';
@@ -47,7 +51,7 @@ export class TasksService {
     shareRequests: AttributeShareRequest[] = [];
     message = '';
 
-    constructor(private walletService: OpenWalletService) { }
+    constructor(private walletService: OpenWalletService, private ipv8Service: IPv8Service) { }
 
     showMessage(msg: string) {
         this.message = msg;
@@ -65,7 +69,8 @@ export class TasksService {
         attributeName: string,
     ) {
         // Does the provider ask attributes in return?
-        const requirements = this.walletService.getAttributeRequirements(providerKey, attributeName);
+        // const requirements = this.walletService.getAttributeRequirements(providerKey, attributeName);
+        const requirements = [] ;  // FIXME
         if (requirements.length > 0) {
             this.requestAttributeShare(providerKey, requirements, 'FIXME REASON')
                 .map((ok) => {
@@ -86,15 +91,23 @@ export class TasksService {
         providerKey: string,
         attributeName: string,
     ) {
-        const request = {
+        const request: IPv8AttestationRequest = {
+            attribute_name: attributeName,
+            mid: KVK_MID,
+            metadata: btoa(JSON.stringify({
             provider: providerKey,
-            option: attributeName
+            option: attributeName,
+            }))
         };
-        return this.walletService.requestAttestation(request)
-            .subscribe((result) => this.receiveAttributeOffer(
-                result.provider, result.attributes, result.reason).subscribe(),
+        return this.ipv8Service.sendAttestationRequest(request)
+        // return this.walletService.requestAttestation(request)
+            .subscribe((result) =>
+            this.showMessage('The request was made'),
+            (err) => this.showMessage('Something went wrong: ' + JSON.stringify(err)));
+        //     .subscribe((result) => this.receiveAttributeOffer(
+        //         result.provider, result.attributes, result.reason).subscribe(),
 
-                err => this.showMessage('Something went wrong: ' + err));
+        //         err => this.showMessage('Something went wrong: ' + err));
     }
 
     /**

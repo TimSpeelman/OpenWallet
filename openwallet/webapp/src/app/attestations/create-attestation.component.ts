@@ -7,6 +7,7 @@ import { OpenWalletService, AttestationRequest } from '../shared/openwallet.serv
 import { IPv8Service } from 'app/shared/ipv8.service';
 import { Attestation } from 'app/shared/attestation.model';
 import { TasksService } from '../shared/tasks.service';
+import { KVK_MID } from '../shared/defs';
 
 @Component({
     selector: 'app-create-attestation',
@@ -27,6 +28,11 @@ export class CreateAttestationComponent implements OnInit, OnDestroy {
         private ipv8Service: IPv8Service) { }
 
     ngOnInit() {
+    }
+
+    providerOnline() {
+        // return this.ipv8Service.peers.indexOf((this.selected_provider || {}).mid);
+        return this.ipv8Service.peers.indexOf(KVK_MID);
     }
 
     requestAttestation() {

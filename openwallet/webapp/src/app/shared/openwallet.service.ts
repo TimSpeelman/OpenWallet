@@ -61,19 +61,15 @@ export class OpenWalletService {
     }
 
     requestAttestation(attestation_request: AttestationRequest): Observable<AttestationResult> {
-        // const result: AttestationResult = {
-        //     attributes: [{ name: 'kvknr', value: '12345678' }],
-        //     provider: 'kvk',
-        //     reason: 'YOU ASKED FOR IT',
-        // };
-        // return Observable.timer(1).map(() => result);
         return this.http.put(this.api_base + '/attestations', attestation_request)
             .map(res => res.json().attestation)
             .catch(err => Observable.throw(err.json()));
     }
 
     storeAttestation(attestation: AttestationResult): Observable<void> {
-        return Observable.timer(1).map(() => { });
+        return this.http.post(this.api_base + '/attestations', attestation)
+            .map(res => res.json())
+            .catch(err => Observable.throw(err.json()));
     }
 }
 

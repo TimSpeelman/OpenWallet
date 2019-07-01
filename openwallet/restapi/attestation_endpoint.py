@@ -28,7 +28,14 @@ class AttestationEndpoint(resource.Resource):
         request.setHeader('Access-Control-Allow-Headers', 'content-type')
         return json.dumps({"fine": "fine"})
 
+    def render_POST(self, request):
+        # Store a completed attestation
+        # TODO implement
+        return json.dumps({"success": True})
+
     def render_PUT(self, request):
+        # Request an attestation. TODO Rename route
+
         parameters = json.loads(request.content.read())
         required_fields = ['provider', 'option']
         for field in required_fields:
