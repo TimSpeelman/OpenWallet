@@ -26,9 +26,6 @@ def main(argv):
     parser.add_argument('--help', '-h', action='help', default=argparse.SUPPRESS, help='Show this help message and exit')
     parser.add_argument('--port', '-p', default=8124, type=int, help='Listen port for web service (8124 by default)')
     parser.add_argument('--ip', '-i', default='127.0.0.1', help='Listen IP for webservice (127.0.0.1 by default)')
-    parser.add_argument('--proxy_url', '-u', help='Proxy url, e.g. https://127.0.0.1:8123')
-    parser.add_argument('--proxy_cert', '-c', default=False, help='Proxy certificate used for pinning (no pinning by default)')
-    parser.add_argument('--ipv8', '-v', action='store_true', help='Enable IPv8 integration')
     args = parser.parse_args(argv)
 
     if not os.path.exists("temp"):
@@ -41,34 +38,23 @@ def main(argv):
     logging.basicConfig(level=logging.ERROR, stream=sys.stdout)
 
     # Start REST endpoints using Twisted
-    # def start():
     vars = globals()
-    proxy_args = (args.proxy_url, args.proxy_cert)
-    providers = {name: vars[settings['class']](*proxy_args) for name, settings in PROVIDERS.iteritems()}
-    if args.ipv8:
-        configuration = get_default_configuration()
-        # configuration['keys'] = [
-        #     {'alias': "anonymous id", 'generation': u"curve25519", 'file': u"temp/ec_multichain.pem"},
-        #     {'alias': "my peer", 'generation': u"medium", 'file': u"temp/ec.pem"}
-        # ]
-        # requested_overlays = ['DiscoveryCommunity', 'AttestationCommunity', 'IdentityCommunity']
-        # configuration['overlays'] = [o for o in configuration['overlays'] if o['class'] in requested_overlays]
+    configuration = get_default_configuration()
 
-        ipv8 = IPv8(configuration)
-        rest_manager = IPv8RESTManager(ipv8)
-        rest_manager.start(args.port)
-        rest_manager.root_endpoint.putChild(b'api', APIEndpoint(providers))
-        rest_manager.root_endpoint.putChild(b'gui', File(os.path.join(BASE_DIR, 'webapp', 'dist')))
-                
-        print('mid_b64: ' + b64encode(ipv8.keys["anonymous id"].mid))
-        print('mid_hex ' + hexlify(ipv8.keys["anonymous id"].mid))
-    else:
-        rest_manager = RESTManager(args.port, providers)
-        rest_manager.start()
-    # reactor.callWhenRunning(start)
+    ipv8 = IPv8(configuration)
+    config = { 
+        'mid_b64': b64encode(ipv8.keys["anonymous id"].mid), 
+        'mid_hex': hexlify(ipv8.keys["anonymous id"].mid) 
+    }
+    rest_manager = IPv8RESTManager(ipv8)
+    rest_manager.start(args.port)
+    rest_manager.root_endpoint.putChild(b'api', APIEndpoint(config))
+    rest_manager.root_endpoint.putChild(b'gui', File(os.path.join(BASE_DIR, 'webapp', 'dist')))
+            
+    print('mid_b64: ' + config['mid_b64'])
+    print('mid_hex ' + config['mid_hex'])
+
     reactor.run()
-
-
 
 if __name__ == "__main__":
     main(sys.argv[1:])

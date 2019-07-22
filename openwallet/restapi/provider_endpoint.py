@@ -10,7 +10,7 @@ from openwallet.defs import PROVIDERS
 class ProviderEndpoint(resource.Resource):
 
     def render_GET(self, request):
-        return json.dumps({"providers": PROVIDERS})
+        return json.dumps(PROVIDERS)
 
     def getChild(self, path, request):
         return SpecificProviderEndpoint(path)

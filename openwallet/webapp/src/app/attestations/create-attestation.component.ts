@@ -39,9 +39,12 @@ export class CreateAttestationComponent implements OnInit {
     }
 
     protected formatProviders(providers: Dict<ProviderD>): ProviderItem[] {
-        console.log('Format prov', providers);
         return Object.keys(providers).map(key =>
-            ({ key, id: providers[key].name, title: providers[key].title[LANG], mid: providers[key].serverId.mid_b64 }));
+            ({
+                key,
+                id: providers[key].name,
+                title: providers[key].title[LANG],
+            }));
     }
 
     get optionItems(): OptionItem[] {
@@ -64,11 +67,15 @@ export class CreateAttestationComponent implements OnInit {
     handleProviderSelected(...args) {
         console.log('handleProviderSelected', this.selected_provider);
         const provider_id = this.selected_provider.id;
-        this.walletService.getProcedures(provider_id);
+        this.walletService.loadProviderId(provider_id).subscribe(() => {
+            this.walletService.getProcedures(provider_id);
+        });
     }
 
     providerOnline() {
-        return this.selected_provider.mid && this.ipv8Service.peers.indexOf(this.selected_provider.mid) >= 0;
+        const id = this.selected_provider.id;
+        const mid = this.walletService.providerMids[id];
+        return mid && this.ipv8Service.peers.indexOf(mid) >= 0;
     }
 
     requestAttestation() {
@@ -93,7 +100,6 @@ export class CreateAttestationComponent implements OnInit {
 interface ProviderItem {
     id: string;
     title: string;
-    mid: string;
 }
 
 interface OptionItem {

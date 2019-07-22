@@ -15,10 +15,10 @@ from ..defs import PROVIDERS
 
 class AttestationEndpoint(resource.Resource):
 
-    def __init__(self, providers):
+    def __init__(self, config):
         resource.Resource.__init__(self)
         self.logger = logging.getLogger(self.__class__.__name__)
-        self.providers = providers
+        self.config = config
         self.db = TinyDB('openwallet.json').table('attestation')
 
     # FIXME Hacky because developing on different domains
