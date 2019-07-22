@@ -9,7 +9,7 @@ import { ModalModule } from 'ng2-bootstrap/modal';
 import { AlertModule } from 'ng2-bootstrap/alert';
 import { CollapseDirective } from 'ng2-bootstrap';
 import { TimeAgoPipe } from 'time-ago-pipe';
-import { QRCodeModule } from 'angularx-qrcode';
+// import { QRCodeComponent } from 'ng2-qrcode';
 
 import { AppComponent } from './app.component';
 import { OpenWalletService } from './shared/openwallet.service';
@@ -19,7 +19,7 @@ import { CreateAttestationComponent } from './attestations/create-attestation.co
 import { ShareRequestComponent } from './attestations/share-request.component';
 import { ViewAttestationComponent } from './attestations/view-attestation.component';
 import { ViewAttestationsComponent } from './attestations/view-attestations.component';
-import { ViewQRCodeComponent } from './attestations/view-qrcode.component';
+// import { ViewQRCodeComponent } from './attestations/view-qrcode.component';
 import { ViewVerificationsComponent } from './verifications/view-verifications.component';
 import { DebugOverviewComponent } from './debug/debug-overview.component';
 import { FileSizePipe } from './shared/file-size.pipe';
@@ -36,7 +36,7 @@ const routes: Routes = [
     { path: 'share-request', component: ShareRequestComponent },
     { path: 'receive-attributes', component: ReceiveAttributesComponent },
     { path: 'attestations/:id', component: ViewAttestationComponent },
-    { path: 'attestations/:id/qrcode', component: ViewQRCodeComponent },
+    // { path: 'attestations/:id/qrcode', component: ViewQRCodeComponent },
     { path: 'verifications', component: ViewVerificationsComponent },
     { path: 'debug', component: DebugOverviewComponent },
 ];
@@ -50,7 +50,7 @@ const routes: Routes = [
         ViewAttestationComponent,
         MessageComponent,
         ViewAttestationsComponent,
-        ViewQRCodeComponent,
+        // ViewQRCodeComponent,
         ViewVerificationsComponent,
         DebugOverviewComponent,
         CollapseDirective,
@@ -65,7 +65,7 @@ const routes: Routes = [
         NgxDatatableModule,
         ModalModule.forRoot(),
         AlertModule.forRoot(),
-        QRCodeModule,
+        // QRCodeComponent,
     ],
     providers: [Location,
         { provide: LocationStrategy, useClass: HashLocationStrategy },
