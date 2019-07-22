@@ -5,7 +5,7 @@ import { takeUntil } from 'rxjs/operators';
 
 import { Attestation } from '../shared/attestation.model';
 import { IPv8Service } from '../shared/ipv8.service';
-import { AndroidInterface } from 'app/shared/android-interface.model';
+import { AndroidInterface } from '../shared/android-interface.model';
 
 declare var android: AndroidInterface;
 
@@ -49,8 +49,9 @@ export class ViewVerificationsComponent implements OnInit, OnDestroy {
         // Javascript - Android communication
         const link = document.getElementById('launch');
         link.onclick = () => android.launchScanner();
-        const _global = (window /* browser */ || global /* node */) as any;
-        _global.onScannerResult = this.onScannerResult.bind(this);
+
+        // const _global = (window /* browser */ || global /* node */) as any;
+        // _global.onScannerResult = this.onScannerResult.bind(this);
     }
 
     ngOnDestroy() {
@@ -61,12 +62,12 @@ export class ViewVerificationsComponent implements OnInit, OnDestroy {
 
         // Check if we need to use the DHT to connect to this peer
         if (this.ipv8Service.peers.indexOf(verification_request.mid) === -1) {
-            observables.push(this.ipv8Service.connectPeer(verification_request.mid))
+            observables.push(this.ipv8Service.connectPeer(verification_request.mid));
         }
 
-        observables.push(this.ipv8Service.sendVerificationRequest(verification_request))
+        observables.push(this.ipv8Service.sendVerificationRequest(verification_request));
         Observable.concat(observables)
-            //.pipe(takeUntil(this.ngUnsubscribe))
+            // .pipe(takeUntil(this.ngUnsubscribe))
             .subscribe();
 
         this.ipv8Service.sendVerificationRequest(verification_request)
