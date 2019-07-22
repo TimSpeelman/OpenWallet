@@ -16,11 +16,12 @@ PROVIDERS = {
         'mid': 'E33a/gdtFKLINQWaJTzhZvarjHw=',
         'options': [
             {
-                'name': 'KvK nummer',
+                'name': 'p_kvknr',
+                'title': 'KvK Nummer',
                 'url': 'https://diensten.kvk.nl/TST-BIN/RB/RBWWJ92@?B128=jQuery331044907343452242376_1560333709834&_=1560333709835',
                 'regexes': [('request', DEFAULT_REQUEST_REGEX),
                             ('response', '\"kvknummer\":\"([0-9]+)\"')],
-                'requires': ['passport'],
+                'requires': ['bsn'],
             }
         ]
     },

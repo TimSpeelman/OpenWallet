@@ -4,14 +4,15 @@
         <div class="account-wall">
             <img class="provider-img" src="assets/images/tuid_logo.png" alt="">
             <div class="form-signin">
-                <select [(ngModel)]="selected_provider" class="form-control" required>
+                <select [(ngModel)]="selected_provider" class="form-control" required
+                    (change)="handleProviderSelected()">
                     <option [ngValue]="undefined" disabled selected hidden>Select your attestation provider</option>
-                    <option *ngFor="let provider of objectValues(walletService.providers)" [ngValue]="provider">
-                        {{provider.name}}</option>
+                    <option *ngFor="let provider of providers" [ngValue]="provider">
+                        {{provider.title}}</option>
                 </select>
                 <select [(ngModel)]="selected_option" class="form-control" required>
                     <option [ngValue]="undefined" disabled selected hidden>Select your attribute</option>
-                    <option *ngFor="let option of selected_provider?.options" [ngValue]="option">{{option.name}}
+                    <option *ngFor="let option of optionItems" [ngValue]="option">{{option.title}}
                     </option>
                 </select>
                 <button (click)="requestAttestation()" class="btn btn-lg btn-block sharp openwallet" type="submit"
@@ -34,6 +35,6 @@
             <td><i class="glyphicon" [ngClass]="providerOnline() > -1 ?
                                                 'glyphicon-ok-circle' : 'glyphicon-remove-circle'"></i></td>
             <td>Trusted party online</td>
-        </tr>        
+        </tr>
     </div>
 </div>

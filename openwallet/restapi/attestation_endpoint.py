@@ -30,8 +30,37 @@ class AttestationEndpoint(resource.Resource):
 
     def render_POST(self, request):
         # Store a completed attestation
-        # TODO implement
-        return json.dumps({"success": True})
+        parameters = json.loads(request.content.read())
+        required_fields = ['provider', 'attribute_name',
+                           'attribute_value', 'attest_sig_b64', 'server_addr']
+        for field in required_fields:
+            if field not in parameters:
+                request.setResponseCode(http.BAD_REQUEST)
+                return json.dumps({"error": "missing %s parameter" % field})
+
+        provider_name = parameters['provider']
+        attribute_name = parameters['attribute_name']
+        attribute_value = parameters['attribute_value']
+        attest_sig_b64 = parameters['attest_sig_b64']
+        server_addr = parameters['server_addr']
+
+        # if provider_name not in PROVIDERS:
+        #     request.setResponseCode(http.BAD_REQUEST)
+        #     return json.dumps({"error": "unknown provider " + provider_name})
+
+        self.db.remove(where('provider') == provider_name and
+                       where('option') == attribute_name)
+
+        attest_dict = {}
+        attest_dict['sig'] = attest_sig_b64
+        attest_dict['provider'] = provider_name
+        attest_dict['server'] = server_addr
+        attest_dict['attribute_name'] = attribute_name
+        attest_dict['attribute_value'] = attribute_value
+        self.db.insert(attest_dict)
+
+        return json.dumps({"success": True,
+                           "attestation": attest_dict})
 
     def render_PUT(self, request):
         # Request an attestation. TODO Rename route

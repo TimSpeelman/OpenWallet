@@ -10,7 +10,8 @@ from twisted.web.static import File
 from ipv8.configuration import get_default_configuration
 from ipv8_service import IPv8
 from ipv8.REST.rest_manager import RESTManager as IPv8RESTManager
-
+from binascii import hexlify
+from base64 import b64encode
 from openwallet.defs import PROVIDERS, BASE_DIR
 from openwallet.provider.digid import DigidProvider
 from openwallet.provider.kvk import KvKProvider
@@ -30,28 +31,43 @@ def main(argv):
     parser.add_argument('--ipv8', '-v', action='store_true', help='Enable IPv8 integration')
     args = parser.parse_args(argv)
 
+    if not os.path.exists("temp"):
+        os.mkdir("temp")
+
     # Setup logging
     observer = log.PythonLoggingObserver()
     observer.start()
     logging.getLogger('twisted').setLevel(logging.ERROR)
-    logging.basicConfig(level=logging.DEBUG, stream=sys.stdout)
+    logging.basicConfig(level=logging.ERROR, stream=sys.stdout)
 
     # Start REST endpoints using Twisted
-    def start():
-        vars = globals()
-        proxy_args = (args.proxy_url, args.proxy_cert)
-        providers = {name: vars[settings['class']](*proxy_args) for name, settings in PROVIDERS.iteritems()}
-        if args.ipv8:
-            ipv8 = IPv8(get_default_configuration())
-            rest_manager = IPv8RESTManager(ipv8)
-            rest_manager.start(args.port)
-            rest_manager.root_endpoint.putChild(b'api', APIEndpoint(providers))
-            rest_manager.root_endpoint.putChild(b'gui', File(os.path.join(BASE_DIR, 'webapp', 'dist')))
-        else:
-            rest_manager = RESTManager(args.port, providers)
-            rest_manager.start()
-    reactor.callWhenRunning(start)
+    # def start():
+    vars = globals()
+    proxy_args = (args.proxy_url, args.proxy_cert)
+    providers = {name: vars[settings['class']](*proxy_args) for name, settings in PROVIDERS.iteritems()}
+    if args.ipv8:
+        configuration = get_default_configuration()
+        # configuration['keys'] = [
+        #     {'alias': "anonymous id", 'generation': u"curve25519", 'file': u"temp/ec_multichain.pem"},
+        #     {'alias': "my peer", 'generation': u"medium", 'file': u"temp/ec.pem"}
+        # ]
+        # requested_overlays = ['DiscoveryCommunity', 'AttestationCommunity', 'IdentityCommunity']
+        # configuration['overlays'] = [o for o in configuration['overlays'] if o['class'] in requested_overlays]
+
+        ipv8 = IPv8(configuration)
+        rest_manager = IPv8RESTManager(ipv8)
+        rest_manager.start(args.port)
+        rest_manager.root_endpoint.putChild(b'api', APIEndpoint(providers))
+        rest_manager.root_endpoint.putChild(b'gui', File(os.path.join(BASE_DIR, 'webapp', 'dist')))
+                
+        print('mid_b64: ' + b64encode(ipv8.keys["anonymous id"].mid))
+        print('mid_hex ' + hexlify(ipv8.keys["anonymous id"].mid))
+    else:
+        rest_manager = RESTManager(args.port, providers)
+        rest_manager.start()
+    # reactor.callWhenRunning(start)
     reactor.run()
+
 
 
 if __name__ == "__main__":

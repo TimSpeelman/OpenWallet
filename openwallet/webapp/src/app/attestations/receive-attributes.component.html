@@ -9,7 +9,7 @@
                     <p>{{ request.reason }}</p>
                     <ul>
                         <li *ngFor="let attribute of attributes">
-                            <strong>{{attribute.name}}:</strong> {{attribute.value}}</li>
+                            <strong>{{attribute.attribute_name}}:</strong> {{attribute.attribute_value}}</li>
                     </ul>
                 </div>
                 <button (click)="confirmRequest()" class="btn btn-lg btn-block sharp openwallet" type="submit"

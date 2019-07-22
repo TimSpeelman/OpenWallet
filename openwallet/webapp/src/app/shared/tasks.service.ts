@@ -1,16 +1,13 @@
 import { Injectable } from '@angular/core';
 import { OpenWalletService } from './openwallet.service';
 import { Observable } from 'rxjs';
-import { IPv8Service, IPv8AttestationRequest } from './ipv8.service';
-import * as uuid from 'uuid/v4';
-import { KVK_MID } from './defs';
+import { IPv8Service } from './ipv8.service';
+import { ProcedureDescription } from '@tsow/ow-attest/dist/types/types/types';
 
 let i = 0;
 function newUUID() {
     return `${i++}`;
 }
-
-// const KVK_MID = 'MJGqSI4uvNBvAIWHzu0znphP/DY=>'; // FIXME
 
 const SHARE_PAGE = '#/share-request';
 const RECEIVE_PAGE = '#/receive-attributes';
@@ -32,8 +29,8 @@ export interface AttributeShareRequest {
 }
 
 export interface Attribute {
-    name: string;
-    value: string;
+    attribute_name: string;
+    attribute_value: string;
 }
 
 export interface AttributeReceiveRequest {
@@ -66,49 +63,48 @@ export class TasksService {
      */
     requestAttribute(
         providerKey: string,
-        attributeName: string,
+        procedureKey: string,
     ) {
         // Does the provider ask attributes in return?
-        // const requirements = this.walletService.getAttributeRequirements(providerKey, attributeName);
-        const requirements = [] ;  // FIXME
+        const procedure: ProcedureDescription =
+            this.walletService.requireProcedure(providerKey, procedureKey);
+        const requirements = procedure.requirements;
+
         if (requirements.length > 0) {
             this.requestAttributeShare(providerKey, requirements, 'FIXME REASON')
                 .map((ok) => {
                     if (ok) {
-                        return this.makeAttributeRequest(providerKey, attributeName);
+                        return this.makeAttributeRequest(providerKey, procedureKey);
                     } else {
                         this.showMessage('Cancelled attribute request because you denied to share your data.');
                     }
                 })
                 .subscribe(); // required, otherwise won't run
         } else {
-            return this.makeAttributeRequest(providerKey, attributeName);
             // Otherwise, call the api now
+            return this.makeAttributeRequest(providerKey, procedureKey);
         }
     }
 
-    private makeAttributeRequest(
+    private async makeAttributeRequest(
         providerKey: string,
-        attributeName: string,
+        procedureKey: string,
     ) {
-        const request: IPv8AttestationRequest = {
-            attribute_name: attributeName,
-            mid: KVK_MID,
-            metadata: btoa(JSON.stringify({
-            provider: providerKey,
-            option: attributeName,
-            }))
-        };
-        return this.ipv8Service.sendAttestationRequest(request)
-        // return this.walletService.requestAttestation(request)
-            .subscribe((result) =>
-            this.showMessage('The request was made'),
-            (err) => this.showMessage('Something went wrong: ' + JSON.stringify(err)));
-        //     .subscribe((result) => this.receiveAttributeOffer(
-        //         result.provider, result.attributes, result.reason).subscribe(),
-
-        //         err => this.showMessage('Something went wrong: ' + err));
+        return this.walletService.requestOWAttestSharingApproved(providerKey, procedureKey)
+            .then((attributes) => {
+                console.log('Received data', attributes);
+                this.receiveAttributeOffer(providerKey,
+                    attributes, 'You requested.').subscribe();
+            });
     }
+
+    // protected fetchValue(attribute_name: string) {
+    //     return Promise.resolve('bsn1'); // FIXME
+    // }
+
+    // protected fetchValues(attribute_names: string[]): Promise<Dict<string>> {
+    //     return Promise.resolve({ bsn: 'bsn1' }); // FIXME
+    // }
 
     /**
      * Makes a new request for the user to share
@@ -148,7 +144,7 @@ export class TasksService {
             throw new Error(`Cannot resolve share-request with id '${requestId}', no such request.`);
         }
 
-        this.shareRequests = this.shareRequests.filter(r => r === req);
+        this.shareRequests = this.shareRequests.filter(r => r !== req);
         req.done(accept);
     }
 
@@ -181,7 +177,7 @@ export class TasksService {
             throw new Error(`Cannot resolve receive-request with id '${requestId}', no such request.`);
         }
 
-        this.receiveRequests = this.receiveRequests.filter(r => r === req);
+        this.receiveRequests = this.receiveRequests.filter(r => r !== req);
         if (accept) {
             this.walletService.storeAttestation(req).subscribe(
                 () => this.showMessage('The attributes were successfully added to your identity.'),
