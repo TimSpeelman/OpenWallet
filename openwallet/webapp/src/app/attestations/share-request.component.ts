@@ -62,10 +62,12 @@ export class ShareRequestComponent implements OnInit, OnDestroy {
     }
 
     confirmRequest() {
+        this.loading = true;
         this.tasksService.resolveAttributeShareRequest(this.request.id, true);
     }
 
     denyRequest() {
+        this.loading = true;
         this.tasksService.resolveAttributeShareRequest(this.request.id, false);
     }
 
