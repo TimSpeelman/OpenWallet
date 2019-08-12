@@ -27,7 +27,9 @@ export class AttributesService {
     constructor(
         private state: State,
         private apiProvider: IPv8APIProvider) {
+
         this.mergeAttributes = memoizeBinary(this.mergeAttributes, this);
+        this.loadIPv8Attestations();
     }
 
     get attributes() {
@@ -40,6 +42,7 @@ export class AttributesService {
             ...s,
             attributes: [...s.attributes, attr],
         });
+        this.loadIPv8Attestations();
     }
 
     public loadIPv8Attestations() {
@@ -52,6 +55,7 @@ export class AttributesService {
     }
 
     protected mergeAttributes(attributes: LocalAttribute[], attestations: Dict<Attestation>): AttestedAttribute[] {
+        console.log('Merge', attributes, attestations);
         return attributes.filter(a => a.hash in attestations)
             .map(a => ({
                 name: a.name,

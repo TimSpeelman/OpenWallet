@@ -4,6 +4,7 @@ import 'rxjs/add/operator/map';
 import { AttributesService } from './attributes.service';
 import { OWClientProvider } from './ow-client.provider';
 import { ProvidersService } from './providers.service';
+import { LocalAttribute } from './state';
 import { Attribute } from './tasks.service';
 
 @Injectable()
@@ -19,7 +20,11 @@ export class OpenWalletService {
         }, 1000);
     }
 
-    async requestOWAttestSharingApproved(providerId: string, procedureId: string, onConsent: (data: Attribute[]) => Promise<boolean>) {
+    async requestOWAttestSharingApproved(
+        providerId: string,
+        procedureId: string,
+        onConsent: (data: Attribute[]) => Promise<boolean>
+    ): Promise<LocalAttribute[]> {
         const provider = this.providersService.providers[providerId];
         const procedure = provider.procedures[procedureId];
         const requirements = procedure.requirements;
@@ -44,16 +49,15 @@ export class OpenWalletService {
         }
         const { data, attestations } = result;
 
-        data.forEach(attr => {
+        return data.map(attr => {
             const attestation = attestations.find(a => a.attribute_name === attr.attribute_name);
-            this.attributesService.storeAttribute({
+            return {
                 name: attr.attribute_name,
                 value: attr.attribute_value,
                 hash: attestation.attribute_hash,
                 time: Date.now(), // FIXME should come from client
-            });
+            };
         });
-        return data;
     }
 }
 

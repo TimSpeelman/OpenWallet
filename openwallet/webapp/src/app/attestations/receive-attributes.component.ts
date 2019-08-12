@@ -1,5 +1,5 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { TasksService, AttributeShareRequest, AttributeReceiveRequest } from '../shared/tasks.service';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AttributeReceiveRequest, TasksService } from '../shared/tasks.service';
 
 @Component({
     selector: 'app-receive-attributes',
@@ -30,6 +30,7 @@ export class ReceiveAttributesComponent implements OnInit, OnDestroy {
     }
 
     confirmRequest() {
+        this.loading = true;
         this.tasksService.resolveAttributeOffer(this.request.id, true);
     }
 

@@ -12,7 +12,9 @@ export class State {
         providers: {},
     };
 
-    constructor(private http: Http) { }
+    constructor(private http: Http) {
+        this.fetch();
+    }
 
     getState() {
         return this.state;

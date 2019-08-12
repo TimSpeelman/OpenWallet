@@ -14,17 +14,23 @@ export class ShareRequestComponent implements OnInit, OnDestroy {
     error_msg;
     show_password = false;
     ngUnsubscribe = new Subject();
-    attributeValues = {};
 
     request: AttributeShareRequest;
 
     constructor(
         private tasksService: TasksService,
         private attributesService: AttributesService,
-        private walletService: OpenWalletService) { }
+        private walletService: OpenWalletService) {
+
+    }
 
     get receiverName() {
         return this.request.receiver;
+    }
+
+    get attributeValues() {
+        return this.attributesService.attributes.reduce(
+            (o, a) => ({ ...o, [a.name]: a.value }), {});
     }
 
     get attributes() {
@@ -39,8 +45,9 @@ export class ShareRequestComponent implements OnInit, OnDestroy {
             return this.tasksService.showMessage('Nothing to share.');
         }
         const names = this.request.attributeNames;
-        this.attributeValues
-            = this.attributesService.attributes.filter(a => names.indexOf(a.name) >= 0);
+        console.log('Share attrS', this.attributesService.attributes);
+        // this.attributeValues
+        //     = this.attributesService.attributes.filter(a => names.indexOf(a.name) >= 0);
     }
 
     confirmRequest() {

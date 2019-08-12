@@ -93,7 +93,7 @@ export class CreateAttestationComponent implements OnInit {
 
         this.loading = true;
 
-        this.tasksService.requestAttribute(provider, option);
+        this.tasksService.requestAttributesByOWProcedure(provider, option);
     }
 
     objectValues<T>(object: Dict<T>): T[] {
