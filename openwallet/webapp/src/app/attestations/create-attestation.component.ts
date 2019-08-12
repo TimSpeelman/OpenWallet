@@ -3,9 +3,9 @@ import { Dict } from '@tsow/ow-attest/dist/types/ipv8/types/Dict';
 import { ServerDescriptor } from '@tsow/ow-attest/dist/types/server/IAttestationServerRESTAPI';
 import { ProcedureDescription } from '@tsow/ow-attest/dist/types/types/types';
 import { IPv8Service } from '../shared/ipv8.service';
-import { memoizeUnary } from '../shared/memoizeFn';
 import { AttestationRequest, OpenWalletService } from '../shared/openwallet.service';
 import { TasksService } from '../shared/tasks.service';
+import { memoizeUnary } from '../shared/util/memoizeFn';
 
 const LANG = 'nl_NL'; // FIXME
 

@@ -6,10 +6,10 @@ import { ClientProcedure, ProcedureDescription, ServerId } from '@tsow/ow-attest
 import 'rxjs/add/operator/map';
 import { Observable } from 'rxjs/Observable';
 import { Attestation } from './attestation.model';
-import { Dict } from './Dict';
 import { ProvidersService } from './providers.service';
 import { State } from './state';
 import { Attribute } from './tasks.service';
+import { Dict } from './types/Dict';
 
 @Injectable()
 export class OpenWalletService {

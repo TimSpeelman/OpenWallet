@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Attestation } from '@tsow/ow-attest/dist/types/ipv8/IPv8API';
-import { Dict } from './Dict';
 import { IPv8APIProvider } from './ipv8api.provider';
-import { memoizeBinary } from './memoizeFn';
 import { LocalAttribute, State } from './state';
+import { Dict } from './types/Dict';
+import { memoizeBinary } from './util/memoizeFn';
 
 @Injectable()
 /**

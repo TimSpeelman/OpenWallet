@@ -1,11 +1,10 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
-
-import { Observable, Subject } from 'rxjs/Rx';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { takeUntil } from 'rxjs/operators';
-
-import { Attestation } from '../shared/attestation.model';
+import { Observable, Subject } from 'rxjs/Rx';
 import { IPv8Service } from '../shared/ipv8.service';
-import { AndroidInterface } from '../shared/android-interface.model';
+import { AndroidInterface } from '../shared/types/android-interface.model';
+
+
 
 declare var android: AndroidInterface;
 
@@ -21,7 +20,7 @@ export class ViewVerificationsComponent implements OnInit, OnDestroy {
     ngUnsubscribe = new Subject();
 
     constructor(private ipv8Service: IPv8Service,
-                private changeDetector: ChangeDetectorRef) {
+        private changeDetector: ChangeDetectorRef) {
     }
 
     ngOnInit() {
@@ -39,7 +38,7 @@ export class ViewVerificationsComponent implements OnInit, OnDestroy {
                             if (verification.attribute_name === undefined) {
                                 self.ipv8Service.getAttribute(verification.mid, verification.attribute_hash)
                                     .pipe(takeUntil(self.ngUnsubscribe))
-                                    .subscribe(attribute =>  verification.attribute_name = (attribute || [])[0]);
+                                    .subscribe(attribute => verification.attribute_name = (attribute || [])[0]);
                             }
                         }
                     });

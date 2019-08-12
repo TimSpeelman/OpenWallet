@@ -19,7 +19,6 @@ import { ViewAttestationComponent } from './attestations/view-attestation.compon
 import { ViewAttestationsComponent } from './attestations/view-attestations.component';
 import { DebugOverviewComponent } from './debug/debug-overview.component';
 import { AttributesService } from './shared/attributes.service';
-import { FileSizePipe } from './shared/file-size.pipe';
 import { IPv8Service } from './shared/ipv8.service';
 import { IPv8APIProvider } from './shared/ipv8api.provider';
 import { OpenWalletService } from './shared/openwallet.service';
@@ -27,6 +26,7 @@ import { OWClientProvider } from './shared/ow-client.provider';
 import { ProvidersService } from './shared/providers.service';
 import { State } from './shared/state';
 import { TasksService } from './shared/tasks.service';
+import { FileSizePipe } from './shared/util/file-size.pipe';
 // import { ViewQRCodeComponent } from './attestations/view-qrcode.component';
 import { ViewVerificationsComponent } from './verifications/view-verifications.component';
 
