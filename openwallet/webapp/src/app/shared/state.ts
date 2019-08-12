@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
-import { Attribute } from '@tsow/ow-attest/dist/types/ipv8/types/Attribute';
 import { Dict } from '@tsow/ow-attest/dist/types/ipv8/types/Dict';
 import { ServerDescriptor } from '@tsow/ow-attest/dist/types/server/IAttestationServerRESTAPI';
 
@@ -43,6 +42,12 @@ export class State {
 }
 
 export interface IState {
-    attributes: Attribute[];
+    attributes: LocalAttribute[];
     providers: Dict<ServerDescriptor>;
+}
+
+export interface LocalAttribute {
+    hash: string;
+    name: string;
+    value: string;
 }

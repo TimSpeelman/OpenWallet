@@ -10,11 +10,20 @@ import { State } from './state';
  */
 export class ProvidersService {
 
-    constructor(private state: State, private owClientProvider: OWClientProvider) { }
+    constructor(
+        private state: State,
+        private owClientProvider: OWClientProvider) { }
+
+    get providers() {
+        return this.state.providers;
+    }
+
+    public getByURL(url: string) {
+        return this.owClientProvider.client.getServerDetails(url);
+    }
 
     public addByURL(url: string) {
-        console.log('Add', url);
-        this.owClientProvider.client.getServerDetails(url)
+        this.getByURL(url)
             .then((details) => {
                 const s = this.state.getState();
                 return this.state.save({

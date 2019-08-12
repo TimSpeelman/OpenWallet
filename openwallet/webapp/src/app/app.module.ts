@@ -21,6 +21,7 @@ import { DebugOverviewComponent } from './debug/debug-overview.component';
 import { AttributesService } from './shared/attributes.service';
 import { FileSizePipe } from './shared/file-size.pipe';
 import { IPv8Service } from './shared/ipv8.service';
+import { IPv8APIProvider } from './shared/ipv8api.provider';
 import { OpenWalletService } from './shared/openwallet.service';
 import { OWClientProvider } from './shared/ow-client.provider';
 import { ProvidersService } from './shared/providers.service';
@@ -78,6 +79,7 @@ const routes: Routes = [
         State,
         ProvidersService,
         OWClientProvider,
+        IPv8APIProvider,
     ],
     bootstrap: [AppComponent]
 })
