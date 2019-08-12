@@ -1,15 +1,13 @@
 import { Http } from '@angular/http';
 import { Injectable, Provider } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import { AttestationClientFactory } from '@tsow/ow-attest';
-import { AttestationClient } from '@tsow/ow-attest/dist/types/client/AttestationClientRunner';
 import 'rxjs/add/operator/map';
 
 import { Attestation } from './attestation.model';
 import { Attribute } from './tasks.service';
-import { Dict } from '@tsow/ow-attest/dist/types/ipv8/types/Dict';
 import { ProviderD } from './provider.model';
 import { ProcedureDescription, ClientProcedure, ServerId } from '@tsow/ow-attest/dist/types/types/types';
+import { Dict } from './Dict';
 
 @Injectable()
 export class OpenWalletService {
@@ -46,7 +44,7 @@ export class OpenWalletService {
 
     /** Load my IPv8 identifiers from the REST API. */
     loadMe(): Observable<MidPair> {
-        return this.http.get(this.api_base + `/me`)
+        return this.http.get(this.api_base + `/about`)
             .map(res => res.json());
     }
 
@@ -65,7 +63,7 @@ export class OpenWalletService {
                 mid_b64: this.providerMids[providerKey].mid_b64,
             }));
         } else {
-            return this.http.get(provider.url + `/id`)
+            return this.http.get(provider.url + `/about`)
                 .map(res => {
                     const { mid_b64, mid_hex } = res.json();
                     console.log(`Received ID for ${providerKey}: ${mid_b64}`);
@@ -93,9 +91,9 @@ export class OpenWalletService {
         const self = this;
         if (!(providerId in this.procedures)) {
             this.loadProviderId(providerId).subscribe((id) => {
-                return this.client.options(id).then((options) => {
-                    self.procedures[providerId] = options;
-                    return options;
+                return this.client.getServerDetails(id.http_address).then((details) => {
+                    self.procedures[providerId] = details.procedures;
+                    return details.procedures;
                 });
             });
         } else {
