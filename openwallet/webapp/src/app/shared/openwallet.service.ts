@@ -2,7 +2,7 @@ import { Http } from '@angular/http';
 import { Injectable, Provider } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
-
+import { AttestationClient, AttestationClientFactory } from '@tsow/ow-attest';
 import { Attestation } from './attestation.model';
 import { Attribute } from './tasks.service';
 import { ProviderD } from './provider.model';
@@ -44,7 +44,7 @@ export class OpenWalletService {
 
     /** Load my IPv8 identifiers from the REST API. */
     loadMe(): Observable<MidPair> {
-        return this.http.get(this.api_base + `/about`)
+        return this.http.get(this.api_base + `/me`)
             .map(res => res.json());
     }
 
