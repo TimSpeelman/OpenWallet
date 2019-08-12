@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { Dict } from '@tsow/ow-attest/dist/types/ipv8/types/Dict';
-import { ServerDescriptor } from '@tsow/ow-attest/dist/types/server/IAttestationServerRESTAPI';
-import { ProcedureDescription } from '@tsow/ow-attest/dist/types/types/types';
+import { ProcedureDescription, ServerDescriptor } from '@tsow/ow-attest';
 import { IPv8Service } from '../shared/ipv8.service';
 import { AttestationRequest, OpenWalletService } from '../shared/openwallet.service';
+import { ProvidersService } from '../shared/providers.service';
 import { TasksService } from '../shared/tasks.service';
+import { Dict } from '../shared/types/Dict';
 import { memoizeUnary } from '../shared/util/memoizeFn';
 
 const LANG = 'nl_NL'; // FIXME
@@ -27,6 +27,7 @@ export class CreateAttestationComponent implements OnInit {
         private walletService: OpenWalletService,
         private ipv8Service: IPv8Service,
         private tasksService: TasksService,
+        private providersService: ProvidersService,
     ) {
         this.formatProviders = memoizeUnary(this.formatProviders, this);
         this.formatProcedures = memoizeUnary(this.formatProcedures, this);
@@ -35,7 +36,7 @@ export class CreateAttestationComponent implements OnInit {
     ngOnInit() { }
 
     get providers(): ProviderItem[] {
-        return this.formatProviders(this.walletService.providers);
+        return this.formatProviders(this.providersService.providers);
     }
 
     protected formatProviders(providers: Dict<ServerDescriptor>): ProviderItem[] {
@@ -56,8 +57,8 @@ export class CreateAttestationComponent implements OnInit {
             }];
         }
         const providerKey = this.selected_provider.id;
-        const procedures = (this.walletService.procedures[providerKey] || {});
-        return this.formatProcedures(procedures);
+        const provider = this.providersService.providers[providerKey];
+        return this.formatProcedures(provider.procedures);
     }
 
     formatProcedures(procedures: Dict<ProcedureDescription>): OptionItem[] {
@@ -68,15 +69,17 @@ export class CreateAttestationComponent implements OnInit {
     handleProviderSelected(...args) {
         console.log('handleProviderSelected', this.selected_provider);
         const provider_id = this.selected_provider.id;
-        this.walletService.loadProviderId(provider_id).subscribe(() => {
-            this.walletService.getProcedures(provider_id);
-        });
     }
 
     providerOnline() {
         const id = this.selected_provider.id;
-        const mid = this.walletService.providerMids[id];
-        return mid && this.ipv8Service.peers.indexOf(mid) >= 0;
+        const mid = this.providersService.providers[id].mid_b64;
+        const ipv8Online = mid && this.ipv8Service.peers.indexOf(mid) >= 0;
+        if (!ipv8Online) {
+            return Promise.resolve(false);
+        } else {
+            return this.providersService.checkIsOnline(this.selected_provider.id);
+        }
     }
 
     requestAttestation() {

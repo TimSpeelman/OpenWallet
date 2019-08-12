@@ -10,9 +10,11 @@ export class OWClientProvider {
 
     private api_base = 'http://localhost:8124/api'; // FIXME
     private _client: AttestationClient;
+    private listeners: Array<(client: AttestationClient) => any> = [];
 
-    get client() {
-        return this._client;
+    getClient() {
+        return this._client ? Promise.resolve(this._client)
+            : new Promise<AttestationClient>((resolve) => this.listeners.push(resolve));
     }
 
     constructor(private http: Http) {
@@ -20,6 +22,7 @@ export class OWClientProvider {
             const config = { ipv8_url: 'http://localhost:8124', mid_b64: me.mid_b64, };
             const factory = new AttestationClientFactory(config);
             this._client = factory.create();
+            this.listeners.forEach(l => l(this._client));
         });
     }
 

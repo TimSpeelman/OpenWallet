@@ -54,9 +54,9 @@ export class AttributesService {
     protected mergeAttributes(attributes: LocalAttribute[], attestations: Dict<Attestation>): AttestedAttribute[] {
         return attributes.filter(a => a.hash in attestations)
             .map(a => ({
-                attribute_name: a.name,
-                attribute_value: a.value,
-                attribute_hash: a.hash,
+                name: a.name,
+                value: a.value,
+                hash: a.hash,
                 metadata: attestations[a.hash].metadata,
                 signer_mid_b64: attestations[a.hash].signer_mid_64,
                 time: a.time, // fixme
@@ -65,9 +65,9 @@ export class AttributesService {
 }
 
 export interface AttestedAttribute {
-    attribute_name: string;
-    attribute_value: string;
-    attribute_hash: string;
+    name: string;
+    value: string;
+    hash: string;
     metadata: any;
     signer_mid_b64: string;
     time: number;

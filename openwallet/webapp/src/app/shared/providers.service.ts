@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
+import { Dict } from '@tsow/ow-attest/dist/types/ipv8/types/Dict';
 import { OWClientProvider } from './ow-client.provider';
 import { State } from './state';
+import { timer } from './util/timer';
 
 @Injectable()
 /**
@@ -10,6 +12,8 @@ import { State } from './state';
  */
 export class ProvidersService {
 
+    private online: Dict<OnlineStatus> = {};
+
     constructor(
         private state: State,
         private owClientProvider: OWClientProvider) { }
@@ -18,8 +22,27 @@ export class ProvidersService {
         return this.state.providers;
     }
 
+    public checkIsOnline(id: string) {
+        if (!(id in this.online)) {
+            this.pingForOnline(id);
+            return false;
+        }
+        return this.online[id] === OnlineStatus.ONLINE;
+    }
+
+    public pingForOnline(id: string) {
+        this.online[id] = OnlineStatus.PENDING;
+        return Promise.race([
+            this.getByURL(this.state.providers[id].url).then(() => true).catch(() => false),
+            timer(1000).then(() => false),
+        ]).then(isOnline => {
+            this.online[id] = isOnline ? OnlineStatus.ONLINE : OnlineStatus.OFFLINE;
+        });
+    }
+
     public getByURL(url: string) {
-        return this.owClientProvider.client.getServerDetails(url);
+        return this.owClientProvider.getClient().then(
+            (client) => client.getServerDetails(url));
     }
 
     public addByURL(url: string) {
@@ -36,4 +59,8 @@ export class ProvidersService {
             });
     }
 
+}
+
+export enum OnlineStatus {
+    ONLINE, PENDING, OFFLINE
 }

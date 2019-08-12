@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { OpenWalletService } from './openwallet.service';
 import { Observable } from 'rxjs';
+import { AttributesService } from './attributes.service';
 import { IPv8Service } from './ipv8.service';
-import { ProcedureDescription } from '@tsow/ow-attest/dist/types/types/types';
+import { OpenWalletService } from './openwallet.service';
+import { ProvidersService } from './providers.service';
 
 let i = 0;
 function newUUID() {
@@ -48,7 +49,11 @@ export class TasksService {
     shareRequests: AttributeShareRequest[] = [];
     message = '';
 
-    constructor(private walletService: OpenWalletService, private ipv8Service: IPv8Service) { }
+    constructor(
+        private walletService: OpenWalletService,
+        private ipv8Service: IPv8Service,
+        private providersService: ProvidersService,
+        private attributesService: AttributesService) { }
 
     showMessage(msg: string) {
         this.message = msg;
@@ -66,8 +71,8 @@ export class TasksService {
         procedureKey: string,
     ) {
         // Does the provider ask attributes in return?
-        const procedure: ProcedureDescription =
-            this.walletService.requireProcedure(providerKey, procedureKey);
+        const provider = this.providersService.providers[providerKey];
+        const procedure = provider.procedures[procedureKey];
         const requirements = procedure.requirements;
 
         if (requirements.length > 0) {
@@ -90,7 +95,9 @@ export class TasksService {
         providerKey: string,
         procedureKey: string,
     ) {
-        return this.walletService.requestOWAttestSharingApproved(providerKey, procedureKey)
+        // const onConsent = (data) => this.receiveAttributeOffer(providerKey, data, "FIXME"));
+        const onConsent = () => Promise.resolve(true); // FIXME
+        return this.walletService.requestOWAttestSharingApproved(providerKey, procedureKey, onConsent)
             .then((attributes) => {
                 console.log('Received data', attributes);
                 this.receiveAttributeOffer(providerKey,
@@ -172,20 +179,20 @@ export class TasksService {
         requestId: string,
         accept: boolean,
     ) {
-        const req = this.receiveRequests.find(s => s.id === requestId);
-        if (!req) {
-            throw new Error(`Cannot resolve receive-request with id '${requestId}', no such request.`);
-        }
+        // const req = this.receiveRequests.find(s => s.id === requestId);
+        // if (!req) {
+        //     throw new Error(`Cannot resolve receive-request with id '${requestId}', no such request.`);
+        // }
 
-        this.receiveRequests = this.receiveRequests.filter(r => r !== req);
-        if (accept) {
-            this.walletService.storeAttestation(req).subscribe(
-                () => this.showMessage('The attributes were successfully added to your identity.'),
-                (err) => this.showMessage('Something went wrong: ' + err)
-            );
-        } else {
-            this.showMessage('The attributes were not added to your identity.');
-        }
+        // this.receiveRequests = this.receiveRequests.filter(r => r !== req);
+        // if (accept) {
+        //     this.attributesService.storeAttribute(req).subscribe(
+        //         () => this.showMessage('The attributes were successfully added to your identity.'),
+        //         (err) => this.showMessage('Something went wrong: ' + err)
+        //     );
+        // } else {
+        //     this.showMessage('The attributes were not added to your identity.');
+        // }
     }
 
     navigateTo(url: string) {

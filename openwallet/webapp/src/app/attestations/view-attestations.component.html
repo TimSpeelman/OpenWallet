@@ -9,11 +9,11 @@
                     </div>
                     <div class="row">
                         <div class="col-xs-5 text">Attribute Name</div>
-                        <div class="col-xs-7 text">{{ attestation.option }}</div>
+                        <div class="col-xs-7 text">{{ attestation.name }}</div>
                     </div>
                     <div class="row">
                         <div class="col-xs-5 text">Attribute Value</div>
-                        <div class="col-xs-7 text">{{ attestation.results[1] }}</div>
+                        <div class="col-xs-7 text">{{ attestation.value }}</div>
                     </div>
                     <div class="row">
                         <div class="col-xs-5 text">Time</div>
@@ -21,22 +21,15 @@
                             {{ attestation.time * 1000 | date:'yyyy-MM-dd HH:mm:ss Z' | timeAgo}}
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-xs-5 text">Status</div>
-                        <div class="col-xs-7 text">
-                            <span *ngIf="attributes[attestation.connection_id]" class="label label-success">completed</span>
-                            <span *ngIf="!attributes[attestation.connection_id]" class="label label-danger">pending</span>
-                        </div>
-                    </div>
                 </div>
                 <div class="col-xs-1">
                     <div class="row">
-                        <a [routerLink]="[encodeURIComponent(attestation.connection_id) + '/qrcode']">
+                        <a [routerLink]="[encodeURIComponent(attestation.hash) + '/qrcode']">
                             <span class="glyphicon glyphicon-qrcode pull-right"></span>
                         </a>
                     </div>
                     <div class="row">
-                        <a [routerLink]="[encodeURIComponent(attestation.connection_id)]">
+                        <a [routerLink]="[encodeURIComponent(attestation.hash)]">
                             <span class="glyphicon glyphicon-info-sign pull-right"></span>
                         </a>
                     </div>

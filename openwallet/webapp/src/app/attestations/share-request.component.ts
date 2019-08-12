@@ -1,9 +1,8 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { TasksService, AttributeShareRequest } from '../shared/tasks.service';
-import { Observable, Subject } from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subject } from 'rxjs';
 import { AttributesService } from '../shared/attributes.service';
-import { takeUntil } from 'rxjs/operators';
 import { OpenWalletService } from '../shared/openwallet.service';
+import { AttributeShareRequest, TasksService } from '../shared/tasks.service';
 
 @Component({
     selector: 'app-share-request',
@@ -39,26 +38,9 @@ export class ShareRequestComponent implements OnInit, OnDestroy {
         if (!this.request) {
             return this.tasksService.showMessage('Nothing to share.');
         }
-
-        this.walletService.fetchValues(this.request.attributeNames)
-        .then((data) => {
-            this.attributeValues = data;
-        });
-
-        // Observable.timer(0, 5000)
-        //     .switchMap(_ =>
-        //         this.attributesService.loadAttributes()
-        //     )
-        //     .pipe(takeUntil(this.ngUnsubscribe))
-        //     .subscribe(({ attestations, attributes }: any) => {
-        //         // Filter out attestations that have been overwritten by more recent ones
-        //         this.allAttributes = attestations.map(a => ({
-        //             provider: a.provider,
-        //             name: a.option,
-        //             value: a.results[1], // FIXME hack
-        //             pending: !attributes[a.connection_id]
-        //         }));
-        //     });
+        const names = this.request.attributeNames;
+        this.attributeValues
+            = this.attributesService.attributes.filter(a => names.indexOf(a.name) >= 0);
     }
 
     confirmRequest() {

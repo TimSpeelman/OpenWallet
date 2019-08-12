@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
-import { Dict } from '@tsow/ow-attest/dist/types/ipv8/types/Dict';
-import { ServerDescriptor } from '@tsow/ow-attest/dist/types/server/IAttestationServerRESTAPI';
+import { ServerDescriptor } from '@tsow/ow-attest';
+import { Dict } from './types/Dict';
 
 /** Keep local state in sync with localhost */
 @Injectable()

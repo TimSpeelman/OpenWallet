@@ -1,12 +1,10 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-
-import { Observable, Subject } from 'rxjs/Rx';
-import { takeUntil } from 'rxjs/operators';
-
-import { Attestation } from '../shared/attestation.model';
-import { OpenWalletService } from '../shared/openwallet.service';
-import { IPv8Service } from '../shared/ipv8.service';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subject } from 'rxjs/Rx';
 import { AttributesService } from '../shared/attributes.service';
+import { IPv8Service } from '../shared/ipv8.service';
+import { OpenWalletService } from '../shared/openwallet.service';
+
+
 
 declare var window: any;
 
@@ -26,33 +24,15 @@ export class ViewAttestationsComponent implements OnInit, OnDestroy {
         private ipv8Service: IPv8Service,
         private attributesService: AttributesService) { }
 
-    ngOnInit() {
-        Observable.timer(0, 5000)
-            .switchMap(_ =>
-                this.attributesService.loadAttributes()
-            )
-            .pipe(takeUntil(this.ngUnsubscribe))
-            .subscribe(({ attestations, attributes }: any) => {
-                // Filter out attestations that have been overwritten by more recent ones
-                this.attestations = attestations;
-                this.attributes = attributes;
-            });
+    get attestedAttributes() {
+        return this.attributesService.attributes;
     }
 
-    ngOnDestroy() {
-        this.ngUnsubscribe.next();
-        this.ngUnsubscribe.complete();
-    }
+    ngOnInit() { }
+
+    ngOnDestroy() { }
 
     delete(event, attestation) {
-        this.witnessService.deleteAttestation(encodeURIComponent(attestation.connection_id))
-            .pipe(takeUntil(this.ngUnsubscribe))
-            .subscribe();
-        event.preventDefault();
-        event.stopPropagation();
-        this.ngOnDestroy();
-        this.ngOnInit();
     }
 
-    trackByConnID(index: number, attestation: Attestation): string { return attestation.connection_id; }
 }

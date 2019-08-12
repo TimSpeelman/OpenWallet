@@ -21,7 +21,7 @@
     "@angular/platform-browser-dynamic": "^2.4.0",
     "@angular/router": "^3.4.0",
     "@swimlane/ngx-datatable": "^6.3.0",
-    "@tsow/ow-attest": "0.0.13-development",
+    "@tsow/ow-attest": "0.0.15-development",
     "@types/lodash": "^4.14.135",
     "axios": "^0.19.0",
     "bootstrap": "^3.3.7",

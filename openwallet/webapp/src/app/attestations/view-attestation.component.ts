@@ -1,11 +1,11 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute, Params } from '@angular/router';
-
-import { Observable, Subject } from 'rxjs/Rx';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { takeUntil, takeWhile } from 'rxjs/operators';
-
-import { OpenWalletService } from '../shared/openwallet.service';
+import { Observable, Subject } from 'rxjs/Rx';
 import { IPv8Service } from '../shared/ipv8.service';
+import { OpenWalletService } from '../shared/openwallet.service';
+
+
 
 @Component({
     selector: 'app-attestation',
@@ -22,12 +22,12 @@ export class ViewAttestationComponent implements OnInit, OnDestroy {
         private activatedRoute: ActivatedRoute) { }
 
     ngOnInit() {
-        this.activatedRoute.params
-            .switchMap((params: Params) =>
-                this.witnessService.getAttestation(params['id'])
-            )
-            .pipe(takeUntil(this.ngUnsubscribe))
-            .subscribe(attestation => this.attestation = attestation);
+        // this.activatedRoute.params
+        //     .switchMap((params: Params) =>
+        //         this.witnessService.getAttestation(params['id'])
+        //     )
+        //     .pipe(takeUntil(this.ngUnsubscribe))
+        //     .subscribe(attestation => this.attestation = attestation);
 
         Observable.timer(1000, 2000)
             .switchMap(_ =>

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ClientProcedure } from '@tsow/ow-attest/dist/types/types/types';
+import { ClientProcedure } from '@tsow/ow-attest';
 import 'rxjs/add/operator/map';
 import { AttributesService } from './attributes.service';
 import { OWClientProvider } from './ow-client.provider';
@@ -19,13 +19,13 @@ export class OpenWalletService {
         }, 1000);
     }
 
-    async requestOWAttestSharingApproved(providerId: string, procedureId: string) {
+    async requestOWAttestSharingApproved(providerId: string, procedureId: string, onConsent: (data: Attribute[]) => Promise<boolean>) {
         const provider = this.providersService.providers[providerId];
         const procedure = provider.procedures[procedureId];
         const requirements = procedure.requirements;
         const credentials = this.attributesService.attributes
-            .filter((a) => requirements.indexOf(a.attribute_name) >= 0)
-            .reduce((c, a) => ({ ...c, [a.attribute_name]: a.attribute_value }), {});
+            .filter((a) => requirements.indexOf(a.name) >= 0)
+            .reduce((c, a) => ({ ...c, [a.name]: a.value }), {});
 
         const cliproc: ClientProcedure = {
             desc: procedure,
@@ -36,7 +36,13 @@ export class OpenWalletService {
         };
         console.log('Initiating Procedure', cliproc);
         console.log('With credentials', credentials);
-        const { data, attestations } = await this.clientProvider.client.execute(cliproc, credentials);
+        const result = await this.clientProvider.getClient()
+            .then(client => client.execute(cliproc, credentials, onConsent));
+
+        if (!result) {
+            return null;
+        }
+        const { data, attestations } = result;
 
         data.forEach(attr => {
             const attestation = attestations.find(a => a.attribute_name === attr.attribute_name);
