@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { OpenWalletService, AttestationRequest } from '../shared/openwallet.service';
-import { TasksService } from '../shared/tasks.service';
 import { Dict } from '@tsow/ow-attest/dist/types/ipv8/types/Dict';
+import { ServerDescriptor } from '@tsow/ow-attest/dist/types/server/IAttestationServerRESTAPI';
 import { ProcedureDescription } from '@tsow/ow-attest/dist/types/types/types';
-import { ProviderD } from '../shared/provider.model';
-import { memoizeUnary } from '../shared/memoizeFn';
 import { IPv8Service } from '../shared/ipv8.service';
+import { memoizeUnary } from '../shared/memoizeFn';
+import { AttestationRequest, OpenWalletService } from '../shared/openwallet.service';
+import { TasksService } from '../shared/tasks.service';
 
 const LANG = 'nl_NL'; // FIXME
 
@@ -38,11 +38,12 @@ export class CreateAttestationComponent implements OnInit {
         return this.formatProviders(this.walletService.providers);
     }
 
-    protected formatProviders(providers: Dict<ProviderD>): ProviderItem[] {
+    protected formatProviders(providers: Dict<ServerDescriptor>): ProviderItem[] {
+        console.log('Format');
         return Object.keys(providers).map(key =>
             ({
                 key,
-                id: providers[key].name,
+                id: providers[key].id,
                 title: providers[key].title[LANG],
             }));
     }

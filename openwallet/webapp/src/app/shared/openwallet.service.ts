@@ -1,58 +1,74 @@
+import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
-import { Injectable, Provider } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/map';
 import { AttestationClient, AttestationClientFactory } from '@tsow/ow-attest';
+import { ServerDescriptor } from '@tsow/ow-attest/dist/types/server/IAttestationServerRESTAPI';
+import { ClientProcedure, ProcedureDescription, ServerId } from '@tsow/ow-attest/dist/types/types/types';
+import 'rxjs/add/operator/map';
+import { Observable } from 'rxjs/Observable';
 import { Attestation } from './attestation.model';
-import { Attribute } from './tasks.service';
-import { ProviderD } from './provider.model';
-import { ProcedureDescription, ClientProcedure, ServerId } from '@tsow/ow-attest/dist/types/types/types';
 import { Dict } from './Dict';
+import { ProvidersService } from './providers.service';
+import { State } from './state';
+import { Attribute } from './tasks.service';
 
 @Injectable()
 export class OpenWalletService {
     private api_base = 'http://localhost:8124/api'; // FIXME
 
-    providers: Dict<ProviderD> = {};
-    providerMids: Dict<MidPair> = {};
+    // providers: Dict<ProviderD> = {};
+    providerMids: Dict<Mid> = {};
     procedures: Dict<Dict<ProcedureDescription>> = {};
     client: AttestationClient;
     attrCache: Dict<string> = {};
 
     loadingProcedures: Dict<boolean> = {};
 
-    constructor(private http: Http) {
+    get providers() {
+        return this.state.providers;
+    }
+
+    get attributes() {
+        return this.state.attributes;
+    }
+
+    constructor(private http: Http, private state: State, private prov: ProvidersService) {
+        state.save({ attributes: [], providers: {} });
+        setTimeout(() => {
+            prov.addByURL('http://localhost:3000');
+            prov.addByURL('http://localhost:4000');
+        }, 1000);
         const self = this;
         this.loadMe().subscribe(me => {
             console.log('My Identity:', me);
             const config = {
                 ipv8_url: 'http://localhost:8124',
                 mid_b64: me.mid_b64,
-                mid_hex: me.mid_hex,
             };
             const factory = new AttestationClientFactory(config);
             this.client = factory.create();
         });
-        this.loadProviders().subscribe(providers => {
-            self.providers = {};
-            providers.map((p) => {
-                console.log('Saving ', p);
-                self.providers[p.name] = p;
-            });
-        });
+        // this.loadProviders().subscribe(providers => {
+        //     self.providers = {};
+        //     providers.map((p) => {
+        //         console.log('Saving ', p);
+        //         self.providers[p.name] = p;
+        //     });
+        // });
     }
 
     /** Load my IPv8 identifiers from the REST API. */
-    loadMe(): Observable<MidPair> {
+    loadMe(): Observable<Mid> {
         return this.http.get(this.api_base + `/me`)
             .map(res => res.json());
     }
 
     /** Load the list of provider descriptors available to our app. */
-    loadProviders(): Observable<ProviderD[]> {
-        return this.http.get(this.api_base + '/providers')
-            .map(res => Object.values(res.json()));
-    }
+    // loadProviders(): ServerDescriptor[] {
+    //     return Object.values(this.state.providers);
+
+    //     // return this.http.get(this.api_base + '/providers')
+    //     //     .map(res => Object.values(res.json()));
+    // }
 
     loadProviderId(providerKey: string): Observable<ServerId> {
         const provider = this.requireProvider(providerKey);
@@ -65,9 +81,9 @@ export class OpenWalletService {
         } else {
             return this.http.get(provider.url + `/about`)
                 .map(res => {
-                    const { mid_b64, mid_hex } = res.json();
+                    const { mid_b64 } = res.json();
                     console.log(`Received ID for ${providerKey}: ${mid_b64}`);
-                    this.providerMids[providerKey] = { mid_b64, mid_hex };
+                    this.providerMids[providerKey] = { mid_b64 };
                     return {
                         http_address: provider.url,
                         mid_b64,
@@ -175,7 +191,7 @@ export class OpenWalletService {
             .catch(err => Observable.throw(err.json()));
     }
 
-    requireProvider(providerId: string): ProviderD {
+    requireProvider(providerId: string): ServerDescriptor {
         if (!(providerId in this.providers)) {
             throw new Error(`Provider '${providerId}' unknown.`);
         } else {
@@ -212,7 +228,6 @@ export interface AttestationData {
     server_addr: [string, number];
 }
 
-export interface MidPair {
-    mid_hex: string;
+export interface Mid {
     mid_b64: string;
 }

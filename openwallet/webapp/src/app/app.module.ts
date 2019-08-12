@@ -1,32 +1,34 @@
-import { BrowserModule } from '@angular/platform-browser';
+import { HashLocationStrategy, Location, LocationStrategy } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
+import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule, Routes } from '@angular/router';
-import { HashLocationStrategy, Location, LocationStrategy } from '@angular/common';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
-import { ModalModule } from 'ng2-bootstrap/modal';
-import { AlertModule } from 'ng2-bootstrap/alert';
 import { CollapseDirective } from 'ng2-bootstrap';
+import { AlertModule } from 'ng2-bootstrap/alert';
+import { ModalModule } from 'ng2-bootstrap/modal';
 import { TimeAgoPipe } from 'time-ago-pipe';
 // import { QRCodeComponent } from 'ng2-qrcode';
-
 import { AppComponent } from './app.component';
-import { OpenWalletService } from './shared/openwallet.service';
-import { IPv8Service } from './shared/ipv8.service';
-
 import { CreateAttestationComponent } from './attestations/create-attestation.component';
+import { MessageComponent } from './attestations/message.component';
+import { ReceiveAttributesComponent } from './attestations/receive-attributes.component';
 import { ShareRequestComponent } from './attestations/share-request.component';
 import { ViewAttestationComponent } from './attestations/view-attestation.component';
 import { ViewAttestationsComponent } from './attestations/view-attestations.component';
+import { DebugOverviewComponent } from './debug/debug-overview.component';
+import { AttributesService } from './shared/attributes.service';
+import { FileSizePipe } from './shared/file-size.pipe';
+import { IPv8Service } from './shared/ipv8.service';
+import { OpenWalletService } from './shared/openwallet.service';
+import { OWClientProvider } from './shared/ow-client.provider';
+import { ProvidersService } from './shared/providers.service';
+import { State } from './shared/state';
+import { TasksService } from './shared/tasks.service';
 // import { ViewQRCodeComponent } from './attestations/view-qrcode.component';
 import { ViewVerificationsComponent } from './verifications/view-verifications.component';
-import { DebugOverviewComponent } from './debug/debug-overview.component';
-import { FileSizePipe } from './shared/file-size.pipe';
-import { TasksService } from './shared/tasks.service';
-import { ReceiveAttributesComponent } from './attestations/receive-attributes.component';
-import { MessageComponent } from './attestations/message.component';
-import { AttributesService } from './shared/attributes.service';
+
 
 const routes: Routes = [
     { path: '', redirectTo: 'create', pathMatch: 'full' },
@@ -73,6 +75,9 @@ const routes: Routes = [
         TasksService,
         IPv8Service,
         AttributesService,
+        State,
+        ProvidersService,
+        OWClientProvider,
     ],
     bootstrap: [AppComponent]
 })

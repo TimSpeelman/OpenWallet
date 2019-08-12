@@ -12,6 +12,8 @@ from twisted.internet import reactor
 from twisted.python import log
 from twisted.web.static import File
 
+sys.path.append("C:\Users\Tim\Dev\OpenWallet")
+
 from ipv8.configuration import get_default_configuration
 from ipv8.REST.rest_manager import RESTManager as IPv8RESTManager
 from ipv8_service import IPv8
@@ -23,7 +25,9 @@ from openwallet.provider.mijnoverheid import MijnOverheidProvider
 from openwallet.restapi.rest_manager import RESTManager
 from openwallet.restapi.root_endpoint import APIEndpoint
 
-sys.path.append("C:\Users\Tim\Dev\OpenWallet")
+
+
+
 
 
 def main(argv):
