@@ -59,7 +59,7 @@ export class AttributesService {
                 attribute_hash: a.hash,
                 metadata: attestations[a.hash].metadata,
                 signer_mid_b64: attestations[a.hash].signer_mid_64,
-                time: 0, // fixme
+                time: a.time, // fixme
             }));
     }
 }

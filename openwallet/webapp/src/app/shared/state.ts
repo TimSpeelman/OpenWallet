@@ -50,4 +50,5 @@ export interface LocalAttribute {
     hash: string;
     name: string;
     value: string;
+    time: number;
 }

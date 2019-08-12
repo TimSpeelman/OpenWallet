@@ -1,213 +1,57 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
-import { AttestationClient, AttestationClientFactory } from '@tsow/ow-attest';
-import { ServerDescriptor } from '@tsow/ow-attest/dist/types/server/IAttestationServerRESTAPI';
-import { ClientProcedure, ProcedureDescription, ServerId } from '@tsow/ow-attest/dist/types/types/types';
+import { ClientProcedure } from '@tsow/ow-attest/dist/types/types/types';
 import 'rxjs/add/operator/map';
-import { Observable } from 'rxjs/Observable';
-import { Attestation } from './attestation.model';
+import { AttributesService } from './attributes.service';
+import { OWClientProvider } from './ow-client.provider';
 import { ProvidersService } from './providers.service';
-import { State } from './state';
 import { Attribute } from './tasks.service';
-import { Dict } from './types/Dict';
 
 @Injectable()
 export class OpenWalletService {
-    private api_base = 'http://localhost:8124/api'; // FIXME
 
-    // providers: Dict<ProviderD> = {};
-    providerMids: Dict<Mid> = {};
-    procedures: Dict<Dict<ProcedureDescription>> = {};
-    client: AttestationClient;
-    attrCache: Dict<string> = {};
-
-    loadingProcedures: Dict<boolean> = {};
-
-    get providers() {
-        return this.state.providers;
-    }
-
-    get attributes() {
-        return this.state.attributes;
-    }
-
-    constructor(private http: Http, private state: State, private prov: ProvidersService) {
-        state.save({ attributes: [], providers: {} });
+    constructor(
+        private providersService: ProvidersService,
+        private attributesService: AttributesService,
+        private clientProvider: OWClientProvider) {
         setTimeout(() => {
-            prov.addByURL('http://localhost:3000');
-            prov.addByURL('http://localhost:4000');
+            providersService.addByURL('http://localhost:3000');
+            providersService.addByURL('http://localhost:4000');
         }, 1000);
-        const self = this;
-        this.loadMe().subscribe(me => {
-            console.log('My Identity:', me);
-            const config = {
-                ipv8_url: 'http://localhost:8124',
-                mid_b64: me.mid_b64,
-            };
-            const factory = new AttestationClientFactory(config);
-            this.client = factory.create();
-        });
-        // this.loadProviders().subscribe(providers => {
-        //     self.providers = {};
-        //     providers.map((p) => {
-        //         console.log('Saving ', p);
-        //         self.providers[p.name] = p;
-        //     });
-        // });
-    }
-
-    /** Load my IPv8 identifiers from the REST API. */
-    loadMe(): Observable<Mid> {
-        return this.http.get(this.api_base + `/me`)
-            .map(res => res.json());
-    }
-
-    /** Load the list of provider descriptors available to our app. */
-    // loadProviders(): ServerDescriptor[] {
-    //     return Object.values(this.state.providers);
-
-    //     // return this.http.get(this.api_base + '/providers')
-    //     //     .map(res => Object.values(res.json()));
-    // }
-
-    loadProviderId(providerKey: string): Observable<ServerId> {
-        const provider = this.requireProvider(providerKey);
-
-        if (providerKey in this.providerMids) {
-            return Observable.create((obs) => obs.next({
-                http_address: provider.url,
-                mid_b64: this.providerMids[providerKey].mid_b64,
-            }));
-        } else {
-            return this.http.get(provider.url + `/about`)
-                .map(res => {
-                    const { mid_b64 } = res.json();
-                    console.log(`Received ID for ${providerKey}: ${mid_b64}`);
-                    this.providerMids[providerKey] = { mid_b64 };
-                    return {
-                        http_address: provider.url,
-                        mid_b64,
-                    };
-                });
-        }
-    }
-
-    getProcedures(providerId: string): false | Dict<ProcedureDescription> {
-        if (!(providerId in this.procedures)) {
-            this.loadProcedures(providerId);
-            return false;
-        } else {
-            return this.procedures[providerId];
-        }
-    }
-
-    /** Loads the procedures a specific provider offers. */
-    loadProcedures(providerId: string): Promise<Dict<ProcedureDescription>> {
-        const providerD = this.requireProvider(providerId);
-        const self = this;
-        if (!(providerId in this.procedures)) {
-            this.loadProviderId(providerId).subscribe((id) => {
-                return this.client.getServerDetails(id.http_address).then((details) => {
-                    self.procedures[providerId] = details.procedures;
-                    return details.procedures;
-                });
-            });
-        } else {
-            return Promise.resolve(this.procedures[providerId]);
-        }
-    }
-
-    getProcedureRequirements(providerId: string, procedureId: string): string[] {
-        const procedure = this.requireProcedure(providerId, procedureId);
-        return procedure.requirements || [];
     }
 
     async requestOWAttestSharingApproved(providerId: string, procedureId: string) {
-        // return Promise.resolve(true);
-        const provider = this.requireProvider(providerId);
-        const procedure = this.requireProcedure(providerId, procedureId);
-        const credentials = await this.fetchValues(procedure.requirements);
+        const provider = this.providersService.providers[providerId];
+        const procedure = provider.procedures[procedureId];
+        const requirements = procedure.requirements;
+        const credentials = this.attributesService.attributes
+            .filter((a) => requirements.indexOf(a.attribute_name) >= 0)
+            .reduce((c, a) => ({ ...c, [a.attribute_name]: a.attribute_value }), {});
+
         const cliproc: ClientProcedure = {
             desc: procedure,
             server: {
                 http_address: provider.url,
-                mid_b64: this.providerMids[providerId].mid_b64,
+                mid_b64: provider.mid_b64,
             }
         };
         console.log('Initiating Procedure', cliproc);
         console.log('With credentials', credentials);
-        const { data, attestations } = await this.client.execute(cliproc, credentials);
+        const { data, attestations } = await this.clientProvider.client.execute(cliproc, credentials);
+
         data.forEach(attr => {
-            this.attrCache[attr.attribute_name] = attr.attribute_value;
+            const attestation = attestations.find(a => a.attribute_name === attr.attribute_name);
+            this.attributesService.storeAttribute({
+                name: attr.attribute_name,
+                value: attr.attribute_value,
+                hash: attestation.attribute_hash,
+                time: Date.now(), // FIXME should come from client
+            });
         });
         return data;
-        // const promises = attestations.map(attestation => this.storeAttestationData(attestation));
-        // return Promise.all(promises);
-    }
-
-    fetchValues(attributes: string[]): Promise<Dict<string>> {
-        const credentials = {};
-        attributes.forEach(attr => { credentials[attr] = this.attrCache[attr]; });
-        return Promise.resolve(credentials);
-    }
-
-    deleteAttestation(attestation_id: string): Observable<Attestation[]> {
-        return this.http.delete(this.api_base + `/attestations/${attestation_id}`)
-            .map(res => res.json().attestation);
-    }
-
-    getAttestation(attestation_id: string): Observable<Attestation> {
-        return this.http.get(this.api_base + `/attestations/${attestation_id}`)
-            .map(res => res.json().attestation);
-    }
-
-    getAttestations(): Observable<Attestation[]> {
-        return this.http.get(this.api_base + '/attestations')
-            .map(res => res.json().attestations.sort((a, b) => a.time > b.time ? 1 : -1));
-    }
-
-    createAttestation(attestation_request): Observable<Attestation> {
-        return this.http.put(this.api_base + '/attestations', attestation_request)
-            .map(res => res.json().attestation)
-            .catch(err => Observable.throw(err.json()));
-    }
-
-    requestAttestation(attestation_request: AttestationRequest): Observable<AttestationResult> {
-        return this.http.put(this.api_base + '/attestations', attestation_request)
-            .map(res => res.json().attestation)
-            .catch(err => Observable.throw(err.json()));
-    }
-
-    storeAttestation(attestation: AttestationResult): Observable<void> {
-        return Observable.create((obs) => obs.next());
-        // return this.http.post(this.api_base + '/attestations', attestation)
-        //     .map(res => res.json())
-        //     .catch(err => Observable.throw(err.json()));
-    }
-
-    storeAttestationData(attestation: AttestationData): Observable<void> { // FIXME
-        return this.http.post(this.api_base + '/attestations', attestation)
-            .map(res => res.json())
-            .catch(err => Observable.throw(err.json()));
-    }
-
-    requireProvider(providerId: string): ServerDescriptor {
-        if (!(providerId in this.providers)) {
-            throw new Error(`Provider '${providerId}' unknown.`);
-        } else {
-            return this.providers[providerId];
-        }
-    }
-
-    requireProcedure(providerId: string, procedureId: string): ProcedureDescription {
-        this.requireProvider(providerId);
-        const procs = this.procedures[providerId] || {};
-        if (!(procedureId in procs)) {
-            throw new Error(`Procedure '${procedureId}' unknown.`);
-        }
-        return procs[procedureId];
     }
 }
+
+
 
 export interface AttestationRequest {
     provider: string;
