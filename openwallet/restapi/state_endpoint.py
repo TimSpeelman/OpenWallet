@@ -21,13 +21,13 @@ class StateEndpoint(resource.Resource):
         return json.dumps({"fine": "fine"})
 
     def render_GET(self, request):
-        with open('state.json', 'r') as infile:
+        with open('temp/state.json', 'r') as infile:
             data = json.load(infile)
         return json.dumps(data)
 
     def render_PUT(self, request):
         data = json.loads(request.content.read())
-        with open('state.json', 'w') as outfile:
+        with open('temp/state.json', 'w') as outfile:
             json.dump(data, outfile)
 
         return json.dumps({"success": True})
