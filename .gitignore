@@ -114,3 +114,4 @@ sqlite/
 openwallet.json
 *.pem
 *.crt
+temp/
