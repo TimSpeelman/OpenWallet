@@ -1,0 +1,43 @@
+<div *ngFor="let provider of providers; trackBy: trackByConnID">
+    <div class="panel panel-default bg-light">
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-xs-11">
+                    <div class="row">
+                        <div class="col-xs-5 text">Provider</div>
+                        <div class="col-xs-7 text">{{ provider.title[lang] }}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-5 text">Description</div>
+                        <div class="col-xs-7 text">{{ provider.description[lang] }}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-5 text">Offers</div>
+                        <div class="col-xs-7 text">
+                            <div *ngFor="let procedure of getProcedures(provider); trackBy: trackByConnID">
+                                {{ procedure.title[lang] }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-1">
+                    <div class="row">
+                        <a [routerLink]="[encodeURIComponent(provider.hash) + '/qrcode']">
+                            <span class="glyphicon glyphicon-qrcode pull-right"></span>
+                        </a>
+                    </div>
+                    <div class="row">
+                        <a [routerLink]="[encodeURIComponent(provider.hash)]">
+                            <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                        </a>
+                    </div>
+                    <div class="row">
+                        <a (click)="delete($event, provider)">
+                            <span class="glyphicon glyphicon-trash pull-right"></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

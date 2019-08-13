@@ -17,6 +17,7 @@ import { ReceiveAttributesComponent } from './attestations/receive-attributes.co
 import { ShareRequestComponent } from './attestations/share-request.component';
 import { ViewAttestationComponent } from './attestations/view-attestation.component';
 import { ViewAttestationsComponent } from './attestations/view-attestations.component';
+import { ViewContactsComponent } from './contacts/view-contacts.component';
 import { DebugOverviewComponent } from './debug/debug-overview.component';
 import { AttributesService } from './shared/attributes.service';
 import { IPv8Service } from './shared/ipv8.service';
@@ -40,6 +41,7 @@ const routes: Routes = [
     { path: 'receive-attributes', component: ReceiveAttributesComponent },
     { path: 'attestations/:id', component: ViewAttestationComponent },
     // { path: 'attestations/:id/qrcode', component: ViewQRCodeComponent },
+    { path: 'contacts', component: ViewContactsComponent },
     { path: 'verifications', component: ViewVerificationsComponent },
     { path: 'debug', component: DebugOverviewComponent },
 ];
@@ -53,6 +55,7 @@ const routes: Routes = [
         ViewAttestationComponent,
         MessageComponent,
         ViewAttestationsComponent,
+        ViewContactsComponent,
         // ViewQRCodeComponent,
         ViewVerificationsComponent,
         DebugOverviewComponent,
