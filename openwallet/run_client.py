@@ -4,6 +4,7 @@ import logging
 import os
 import shutil
 import sys
+import json
 from base64 import b64encode
 from binascii import hexlify
 from threading import Thread
@@ -24,6 +25,8 @@ from openwallet.provider.mijnoverheid import MijnOverheidProvider
 from openwallet.restapi.rest_manager import RESTManager
 from openwallet.restapi.root_endpoint import APIEndpoint
 
+
+
 def main(argv):
     parser = argparse.ArgumentParser(add_help=False, description=(
         'Simple client for various types attestations'))
@@ -39,9 +42,15 @@ def main(argv):
 
     if os.path.exists("temp") and args.reset:
         shutil.rmtree("temp")
-    
+
     if not os.path.exists("temp"):
         os.mkdir("temp")
+        with open('temp/state.json', 'w') as outfile:
+            data = {
+                "attributes": [],
+                "providers": {}
+            }
+            json.dump(data, outfile)
 
     # Start REST endpoints using Twisted
     vars = globals()
