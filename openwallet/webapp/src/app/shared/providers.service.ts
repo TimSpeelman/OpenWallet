@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { ServerDescriptor } from '@tsow/ow-attest';
 import { Dict } from '@tsow/ow-attest/dist/types/ipv8/types/Dict';
 import { OWClientProvider } from './ow-client.provider';
 import { State } from './state';
@@ -47,16 +48,18 @@ export class ProvidersService {
 
     public addByURL(url: string) {
         this.getByURL(url)
-            .then((details) => {
-                const s = this.state.getState();
-                return this.state.save({
-                    ...s,
-                    providers: {
-                        ...s.providers,
-                        [details.id]: details,
-                    }
-                });
-            });
+            .then((details) => this.addOrUpdate(details));
+    }
+
+    protected addOrUpdate(details: ServerDescriptor) {
+        const s = this.state.getState();
+        return this.state.save({
+            ...s,
+            providers: {
+                ...s.providers,
+                [details.id]: details,
+            }
+        });
     }
 
 }

@@ -49,13 +49,17 @@ export class OpenWalletService {
         }
         const { data, attestations } = result;
 
-        return data.map(attr => {
+        return data.map((attr): LocalAttribute => {
             const attestation = attestations.find(a => a.attribute_name === attr.attribute_name);
+            const attrDesc = procedure.attributes.find(a => a.name === attr.attribute_name);
             return {
                 name: attr.attribute_name,
                 value: attr.attribute_value,
                 hash: attestation.attribute_hash,
                 time: Date.now(), // FIXME should come from client
+                provider_title: provider.title,
+                title: attrDesc.title,
+                type: attrDesc.type,
             };
         });
     }

@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ProvidersService } from '../shared/providers.service';
 import { AttributeReceiveRequest, TasksService } from '../shared/tasks.service';
 
 @Component({
@@ -12,10 +13,15 @@ export class ReceiveAttributesComponent implements OnInit, OnDestroy {
 
     request: AttributeReceiveRequest;
 
-    constructor(private tasksService: TasksService) { }
+    constructor(private tasksService: TasksService,
+        private providersService: ProvidersService) { }
 
     get providerName() {
         return this.request.provider;
+    }
+
+    get providerLogoUrl() {
+        return this.providersService.providers[this.request.provider].logo_url;
     }
 
     get attributes() {

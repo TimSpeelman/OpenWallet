@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
 import { AttributesService } from '../shared/attributes.service';
 import { OpenWalletService } from '../shared/openwallet.service';
+import { ProvidersService } from '../shared/providers.service';
 import { AttributeShareRequest, TasksService } from '../shared/tasks.service';
 
 @Component({
@@ -20,6 +21,7 @@ export class ShareRequestComponent implements OnInit, OnDestroy {
     constructor(
         private tasksService: TasksService,
         private attributesService: AttributesService,
+        private providersService: ProvidersService,
         private walletService: OpenWalletService) {
 
     }
@@ -37,6 +39,10 @@ export class ShareRequestComponent implements OnInit, OnDestroy {
         return this.request.attributeNames.map(a => ({
             name: a, value: this.attributeValues[a]
         })); // FIXME, add value
+    }
+
+    get receiverLogoUrl() {
+        return this.providersService.providers[this.request.receiver].logo_url;
     }
 
     ngOnInit() {

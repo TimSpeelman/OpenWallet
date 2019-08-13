@@ -7,12 +7,11 @@ import sys
 from base64 import b64encode
 from binascii import hexlify
 from threading import Thread
+sys.path.append("C:\Users\Tim\Dev\OpenWallet")
 
 from twisted.internet import reactor
 from twisted.python import log
 from twisted.web.static import File
-
-sys.path.append("C:\Users\Tim\Dev\OpenWallet")
 
 from ipv8.configuration import get_default_configuration
 from ipv8.REST.rest_manager import RESTManager as IPv8RESTManager
@@ -25,11 +24,6 @@ from openwallet.provider.mijnoverheid import MijnOverheidProvider
 from openwallet.restapi.rest_manager import RESTManager
 from openwallet.restapi.root_endpoint import APIEndpoint
 
-
-
-
-
-
 def main(argv):
     parser = argparse.ArgumentParser(add_help=False, description=(
         'Simple client for various types attestations'))
@@ -39,12 +33,15 @@ def main(argv):
                         help='Listen port for web service (8124 by default)')
     parser.add_argument('--ip', '-i', default='127.0.0.1',
                         help='Listen IP for webservice (127.0.0.1 by default)')
+    parser.add_argument('--reset', '-r', action='store_true', default=False,
+                        help='Resets the identity')
     args = parser.parse_args(argv)
 
-    if os.path.exists("temp"):
+    if os.path.exists("temp") and args.reset:
         shutil.rmtree("temp")
-
-    os.mkdir("temp")
+    
+    if not os.path.exists("temp"):
+        os.mkdir("temp")
 
     # Start REST endpoints using Twisted
     vars = globals()

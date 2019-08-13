@@ -50,7 +50,7 @@
 }
 .provider-img {
     width: 96px;
-    height: 96px;
+    max-height: 96px;
     margin: 0 auto 10px;
     display: block;
 }

@@ -46,7 +46,7 @@ export class CreateAttestationComponent implements OnInit {
                 key,
                 id: providers[key].id,
                 title: providers[key].title[LANG],
-            }));
+            })).sort((a, b) => a.title[LANG] > b.title[LANG] ? -1 : 1);
     }
 
     get optionItems(): OptionItem[] {

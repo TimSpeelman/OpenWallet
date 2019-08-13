@@ -1,40 +1,44 @@
-<div *ngFor="let attestation of attestations; trackBy: trackByConnID">
+<div *ngFor="let attr of attestedAttributes; trackBy: trackByConnID">
     <div class="panel panel-default bg-light">
         <div class="panel-body">
             <div class="row">
                 <div class="col-xs-11">
                     <div class="row">
                         <div class="col-xs-5 text">Issuer</div>
-                        <div class="col-xs-7 text">{{ attestation.provider }}</div>
+                        <div class="col-xs-7 text">{{ attr.provider_title[lang] }}</div>
                     </div>
                     <div class="row">
                         <div class="col-xs-5 text">Attribute Name</div>
-                        <div class="col-xs-7 text">{{ attestation.name }}</div>
+                        <div class="col-xs-7 text">{{ attr.title[lang] }} ({{ attr.name }})</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-5 text">Attribute Type</div>
+                        <div class="col-xs-7 text">{{ attr.type }}</div>
                     </div>
                     <div class="row">
                         <div class="col-xs-5 text">Attribute Value</div>
-                        <div class="col-xs-7 text">{{ attestation.value }}</div>
+                        <div class="col-xs-7 text">{{ attr.value }}</div>
                     </div>
                     <div class="row">
                         <div class="col-xs-5 text">Time</div>
                         <div class="col-xs-7 text">
-                            {{ attestation.time * 1000 | date:'yyyy-MM-dd HH:mm:ss Z' | timeAgo}}
+                            {{ attr.time | date:'yyyy-MM-dd HH:mm:ss Z'}} ({{ attr.time | timeAgo }})
                         </div>
                     </div>
                 </div>
                 <div class="col-xs-1">
                     <div class="row">
-                        <a [routerLink]="[encodeURIComponent(attestation.hash) + '/qrcode']">
+                        <a [routerLink]="[encodeURIComponent(attr.hash) + '/qrcode']">
                             <span class="glyphicon glyphicon-qrcode pull-right"></span>
                         </a>
                     </div>
                     <div class="row">
-                        <a [routerLink]="[encodeURIComponent(attestation.hash)]">
+                        <a [routerLink]="[encodeURIComponent(attr.hash)]">
                             <span class="glyphicon glyphicon-info-sign pull-right"></span>
                         </a>
                     </div>
                     <div class="row">
-                        <a (click)="delete($event, attestation)">
+                        <a (click)="delete($event, attr)">
                             <span class="glyphicon glyphicon-trash pull-right"></span>
                         </a>
                     </div>

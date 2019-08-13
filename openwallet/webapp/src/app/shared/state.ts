@@ -53,4 +53,7 @@ export interface LocalAttribute {
     name: string;
     value: string;
     time: number;
+    type: string;
+    title: Dict<string>;
+    provider_title: Dict<string>;
 }

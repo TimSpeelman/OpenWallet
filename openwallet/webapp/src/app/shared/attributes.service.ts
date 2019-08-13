@@ -64,6 +64,9 @@ export class AttributesService {
                 metadata: attestations[a.hash].metadata,
                 signer_mid_b64: attestations[a.hash].signer_mid_64,
                 time: a.time, // fixme
+                title: a.title,
+                type: a.type,
+                provider_title: a.provider_title,
             }));
     }
 }
@@ -74,5 +77,8 @@ export interface AttestedAttribute {
     hash: string;
     metadata: any;
     signer_mid_b64: string;
+    type: string;
     time: number;
+    title: Dict<string>;
+    provider_title: Dict<string>;
 }
