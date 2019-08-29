@@ -1,14 +1,13 @@
 import argparse
 import glob
+import json
 import logging
 import os
 import shutil
 import sys
-import json
 from base64 import b64encode
 from binascii import hexlify
 from threading import Thread
-sys.path.append("C:\Users\Tim\Dev\OpenWallet")
 
 from twisted.internet import reactor
 from twisted.python import log
@@ -18,13 +17,8 @@ from ipv8.configuration import get_default_configuration
 from ipv8.REST.rest_manager import RESTManager as IPv8RESTManager
 from ipv8_service import IPv8
 from openwallet.defs import BASE_DIR, PROVIDERS
-from openwallet.provider.digid import DigidProvider
-from openwallet.provider.github import GithubProvider
-from openwallet.provider.kvk import KvKProvider
-from openwallet.provider.mijnoverheid import MijnOverheidProvider
 from openwallet.restapi.rest_manager import RESTManager
 from openwallet.restapi.root_endpoint import APIEndpoint
-
 
 
 def main(argv):
