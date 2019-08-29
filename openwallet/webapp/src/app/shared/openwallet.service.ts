@@ -14,10 +14,6 @@ export class OpenWalletService {
         private providersService: ProvidersService,
         private attributesService: AttributesService,
         private clientProvider: OWClientProvider) {
-        setTimeout(() => {
-            providersService.addByURL('http://localhost:3000');
-            providersService.addByURL('http://localhost:4000');
-        }, 1000);
     }
 
     async requestOWAttestSharingApproved(

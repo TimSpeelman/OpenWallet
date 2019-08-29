@@ -47,8 +47,8 @@ export class ProvidersService {
     }
 
     public addByURL(url: string) {
-        this.getByURL(url)
-            .then((details) => this.addOrUpdate(details));
+        return this.getByURL(url)
+            .then((details) => { this.addOrUpdate(details); return details; });
     }
 
     protected addOrUpdate(details: ServerDescriptor) {
