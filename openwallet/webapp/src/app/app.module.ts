@@ -5,11 +5,11 @@ import { HttpModule } from '@angular/http';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule, Routes } from '@angular/router';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
+import { QRCodeModule } from 'angular2-qrcode';
 import { CollapseDirective } from 'ng2-bootstrap';
 import { AlertModule } from 'ng2-bootstrap/alert';
 import { ModalModule } from 'ng2-bootstrap/modal';
 import { TimeAgoPipe } from 'time-ago-pipe';
-// import { QRCodeComponent } from 'ng2-qrcode';
 import { AppComponent } from './app.component';
 import { CreateAttestationComponent } from './attestations/create-attestation.component';
 import { MessageComponent } from './attestations/message.component';
@@ -17,6 +17,7 @@ import { ReceiveAttributesComponent } from './attestations/receive-attributes.co
 import { ShareRequestComponent } from './attestations/share-request.component';
 import { ViewAttestationComponent } from './attestations/view-attestation.component';
 import { ViewAttestationsComponent } from './attestations/view-attestations.component';
+import { ViewQRCodeComponent } from './attestations/view-qrcode.component';
 import { ViewContactsComponent } from './contacts/view-contacts.component';
 import { DebugOverviewComponent } from './debug/debug-overview.component';
 import { AttributesService } from './shared/attributes.service';
@@ -28,9 +29,7 @@ import { ProvidersService } from './shared/providers.service';
 import { State } from './shared/state';
 import { TasksService } from './shared/tasks.service';
 import { FileSizePipe } from './shared/util/file-size.pipe';
-// import { ViewQRCodeComponent } from './attestations/view-qrcode.component';
 import { ViewVerificationsComponent } from './verifications/view-verifications.component';
-
 
 const routes: Routes = [
     { path: '', redirectTo: 'create', pathMatch: 'full' },
@@ -40,7 +39,7 @@ const routes: Routes = [
     { path: 'share-request', component: ShareRequestComponent },
     { path: 'receive-attributes', component: ReceiveAttributesComponent },
     { path: 'attestations/:id', component: ViewAttestationComponent },
-    // { path: 'attestations/:id/qrcode', component: ViewQRCodeComponent },
+    { path: 'attestations/:id/qrcode', component: ViewQRCodeComponent },
     { path: 'contacts', component: ViewContactsComponent },
     { path: 'verifications', component: ViewVerificationsComponent },
     { path: 'debug', component: DebugOverviewComponent },
@@ -56,7 +55,7 @@ const routes: Routes = [
         MessageComponent,
         ViewAttestationsComponent,
         ViewContactsComponent,
-        // ViewQRCodeComponent,
+        ViewQRCodeComponent,
         ViewVerificationsComponent,
         DebugOverviewComponent,
         CollapseDirective,
@@ -71,7 +70,7 @@ const routes: Routes = [
         NgxDatatableModule,
         ModalModule.forRoot(),
         AlertModule.forRoot(),
-        // QRCodeComponent,
+        QRCodeModule,
     ],
     providers: [Location,
         { provide: LocationStrategy, useClass: HashLocationStrategy },

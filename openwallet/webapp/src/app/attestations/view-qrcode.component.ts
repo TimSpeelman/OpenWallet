@@ -1,12 +1,12 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
-import { ActivatedRoute, Params } from '@angular/router';
-
-import { Observable, Subject } from 'rxjs/Rx';
-import { takeUntil } from 'rxjs/operators';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import 'rxjs/add/observable/forkJoin';
-
-import { OpenWalletService } from '../shared/openwallet.service';
+import { takeUntil } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs/Rx';
 import { IPv8Service } from '../shared/ipv8.service';
+import { OpenWalletService } from '../shared/openwallet.service';
+
+
 
 @Component({
     selector: 'app-view-qrcode',
@@ -26,26 +26,33 @@ export class ViewQRCodeComponent implements OnInit, OnDestroy {
         private activatedRoute: ActivatedRoute) { }
 
     ngOnInit() {
-        this.activatedRoute.params
-            .switchMap((params: Params) =>
-                Observable.forkJoin(
-                    this.witnessService.getAttestation(params['id']),
-                    this.ipv8Service.getAttributes(),
-                    this.ipv8Service.getOverlay('IdentityCommunity')
-                )
-            )
-            .subscribe(([attestation, attributes, overlay]: any) => {
-                // Calculate mid for IdentityCommunity
-                const mid_b64 = this.ipv8Service.publicKeyToMid64(overlay.my_peer);
-                const attribute_value = btoa(JSON.stringify(attestation.results))
-                this.qrcode = JSON.stringify(
-                    {
-                        mid: mid_b64,
-                        attribute_hash: attributes[attestation.connection_id][1],
-                        attribute_value: attribute_value,
-                    }
-                );
-            });
+        this.qrcode = JSON.stringify(
+            {
+                mid: '123123123123123123123123',
+                attribute_hash: '123123123123123123123123',
+                attribute_value: '123123123123123123123123',
+            }
+        );
+        // this.activatedRoute.params
+        //     .switchMap((params: Params) =>
+        //         Observable.forkJoin(
+        //             this.witnessService.getAttestation(params['id']),
+        //             this.ipv8Service.getAttributes(),
+        //             this.ipv8Service.getOverlay('IdentityCommunity')
+        //         )
+        //     )
+        //     .subscribe(([attestation, attributes, overlay]: any) => {
+        //         // Calculate mid for IdentityCommunity
+        //         const mid_b64 = this.ipv8Service.publicKeyToMid64(overlay.my_peer);
+        //         const attribute_value = btoa(JSON.stringify(attestation.results))
+        //         this.qrcode = JSON.stringify(
+        //             {
+        //                 mid: mid_b64,
+        //                 attribute_hash: attributes[attestation.connection_id][1],
+        //                 attribute_value: attribute_value,
+        //             }
+        //         );
+        //     });
 
         // If there are any new verification requests, notify the user
         Observable.timer(0, 1000)
@@ -74,7 +81,7 @@ export class ViewQRCodeComponent implements OnInit, OnDestroy {
         const mid = this.allow_verify[0];
         const name = this.allow_verify[1];
         this.ipv8Service.acceptVerificationRequest(mid, name)
-            //.pipe(takeUntil(this.ngUnsubscribe))
+            // .pipe(takeUntil(this.ngUnsubscribe))
             .subscribe();
         modal.hide();
     }
