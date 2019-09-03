@@ -9,7 +9,7 @@
                 </a>
             </div>
             <div class="page-title">
-                Request Credential
+                Verification Request
             </div>
             <div class="burger-menu" (click)="globals.menuOpen = true">
                 <span class="fas fa-bars"></span>
@@ -21,12 +21,12 @@
 
     <div class="after-header"> </div>
 
-    <main class="text-center">
-        <h1>Step 1: Share Information</h1>
+    <main class="text-center" *ngIf="request">
+        <h1>Someone wishes to verify</h1>
         <p>
-            {{ receiver.title[lang] }} requires the following information:
+            {{ request.mid }} wishes to verify your information:
         </p>
-        <div class="card-item clickable" *ngFor="let attribute of attributes">
+        <div class="card-item clickable">
             <div class="row">
                 <div class="logo-box">
                     <img src="{{ getProviderLogoUrl(attribute.signer_mid_b64) }}" />

@@ -1,15 +1,14 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-
-import { Observable, Subject } from 'rxjs/Rx';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { takeUntil } from 'rxjs/operators';
-
+import { Observable, Subject } from 'rxjs/Rx';
 import { IPv8Service } from '../shared/ipv8.service';
-import { filter } from 'rxjs/operator/filter';
+
+
 
 @Component({
     selector: 'app-debug-overview',
     templateUrl: 'debug-overview.component.html',
-    styleUrls: ['./debug-overview.component.css'],
+    styleUrls: [],
 
 })
 export class DebugOverviewComponent implements OnInit, OnDestroy {

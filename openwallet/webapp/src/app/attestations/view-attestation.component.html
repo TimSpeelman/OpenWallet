@@ -1,52 +1,93 @@
-<div *ngIf="attestation != undefined">
-    <div class="row">
-        <div class="col-xs-12 text">
-            <h4>Attestation {{ attestation.connection_id }}</h4>
+<div class="subpage nav-compact main-over-nav">
+
+    <header>
+        <div class="content">
+            <div class="back-arrow">
+                <a routerLink="/attestations">
+                    <span class="fas fa-chevron-left"></span>
+                </a>
+            </div>
+            <div class="page-title">
+                Credential
+            </div>
+            <div class="burger-menu" (click)="globals.menuOpen = true">
+                <span class="fas fa-bars"></span>
+            </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-xs-5 text">Regex request</div>
-        <div class="col-xs-7 text">{{ attestation.regexes[0][1] }}</div>
-    </div>
-    <div class="row">
-        <div class="col-xs-5 text">Regex response</div>
-        <div class="col-xs-7 text">{{ attestation.regexes[1][1] }}</div>
-    </div>
-    <div class="row">
-        <div class="col-xs-5 text">Attribute request</div>
-        <div class="col-xs-7 text">{{ attestation.results[0] }}</div>
-    </div>
-    <div class="row">
-        <div class="col-xs-5 text">Attribute response</div>
-        <div class="col-xs-7 text">{{ attestation.results[1] }}</div>
-    </div>
-    <!-- <div class="row">
-        <div class="col-xs-5 text">Signature</div>
-        <div class="col-xs-7 text">{{ attestation.sig }}</div>
-    </div>
-    <div class="row">
-        <div class="col-xs-5 text">Public key</div>
-        <div class="col-xs-7 text link">{{ attestation.public_key }}</div>
-    </div> -->
-    <div class="row">
-        <div class="col-xs-5 text">Remote address</div>
-        <div class="col-xs-7 text">{{ attestation.server[0] }}:{{ attestation.server[1] }}</div>
-    </div>
-    <div class="row">
-        <div class="col-xs-5 text">Timestamp</div>
-        <div class="col-xs-7 text">{{ attestation.time * 1000 | date:'dd-MM-yyyy HH:mm:ss Z' }}</div>
-    </div>
-    <div *ngIf="attribute" class="row">
-        <div class="col-xs-5 text">Attribute name</div>
-        <div class="col-xs-7 text">{{ attribute[0] }}</div>
-    </div>
-    <div *ngIf="attribute" class="row">
-        <div class="col-xs-5 text">Attribute hash</div>
-        <div class="col-xs-7 text">{{ attribute[1] }}</div>
-    </div>
-    <div *ngIf="attribute" class="row">
-        <div class="col-xs-5 text">Peer</div>
-        <div class="col-xs-7 text">{{ attribute[3] }}</div>
-    </div>
+
+        <div class="background"></div>
+    </header>
+
+    <div class="after-header"> </div>
+
+
+    <main *ngIf="attr">
+        <div class="card-item">
+            <div class="row">
+                <div class="logo-box">
+                    <img src="{{ providerLogoUrl }}" />
+                </div>
+                <div class="text-box">
+                    <div class="primary">{{ attr.title[lang] }}</div>
+                    <div class="secondary">{{ attr.provider_title[lang] }}</div>
+                </div>
+                <div class="tool">
+                    <!-- <div class="clickable" btnlink="./credential-share.html">
+                    <span class="fas fa-qrcode"></span>
+                </div> -->
+                </div>
+            </div>
+            <div class="credential-details">
+                <div class="row">
+                    <div class="text">
+                        <div class="primary">{{ attr.title[lang] }}</div>
+                        <div class="secondary">{{ attr.value }}</div>
+                    </div>
+                    <div class="tool">
+                        <span class="fas fa-qrcode clickable" (click)="showQR();scrollDelayed(target, 500)"></span>
+                    </div>
+                </div>
+            </div>
+            <div [hidden]="!qrcode" class="qr-code" #target>
+                <qr-code [value]="qrcode" [size]="256" [level]="'M'"></qr-code>
+            </div>
+            <div class="credential-meta">
+                <table>
+                    <tr>
+                        <th>Signed by</th>
+                        <td>{{ attr.provider_title[lang] }}</td>
+                    </tr>
+                    <tr>
+                        <th></th>
+                        <td style="font-size:.8em">{{ attr.signer_mid_b64 }}</td>
+                    </tr>
+                    <tr>
+                        <th>Hash</th>
+                        <td style="word-break: break-all">{{ attr.hash }}</td>
+                    </tr>
+                    <tr>
+                        <th>Created at</th>
+                        <td>{{ attr.time | date:'dd-MM-yyyy HH:mm:ss Z' }}</td>
+                    </tr>
+                    <!-- <tr>
+                    <th>Valid until</th>
+                    <td></td>
+                </tr> -->
+                </table>
+            </div>
+        </div>
+
+        <div class="bottom-tools">
+            <!-- <a class="fab-btn secondary bottom-left" style="font-size: 2em" href="remove-credential.html">
+                <span class="far fa-trash-alt"></span>
+            </a> -->
+            <a class="fab-btn primary bottom-center" style="font-size: 3em" href="qr-scan.html">
+                <img src="./assets/images/qr-scan.svg" alt="" style="width:50%">
+            </a>
+            <!-- <a class="fab-btn secondary bottom-right" style="font-size: 2em" href="share-credential.html">
+                <span class="fas fa-share-alt"></span>
+            </a> -->
+        </div>
+    </main>
+
 </div>
-<br>

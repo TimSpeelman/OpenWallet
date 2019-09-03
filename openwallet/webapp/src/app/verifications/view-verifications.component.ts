@@ -11,7 +11,7 @@ declare var android: AndroidInterface;
 @Component({
     selector: 'app-verifications',
     templateUrl: 'view-verifications.component.html',
-    styleUrls: ['./view-verifications.component.css'],
+    styleUrls: [],
 
 })
 export class ViewVerificationsComponent implements OnInit, OnDestroy {

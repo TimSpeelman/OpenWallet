@@ -1,40 +1,54 @@
-<div class="row">
-    <div class="col-sm-offset-3 col-sm-6 col-md-4 col-md-offset-4">
-        <h1 class="text-center login-title">Create a new attestation below</h1>
-        <div class="account-wall">
-            <img class="provider-img" src="assets/images/OpenWalletLogo.png" alt="">
-            <div class="form-signin">
-                <select [(ngModel)]="selected_provider" class="form-control" required
-                    (change)="handleProviderSelected()">
-                    <option [ngValue]="undefined" disabled selected hidden>Select your attestation provider</option>
-                    <option *ngFor="let provider of providers" [ngValue]="provider">
-                        {{provider.title}}</option>
-                </select>
-                <select [(ngModel)]="selected_option" class="form-control" required>
-                    <option [ngValue]="undefined" disabled selected hidden>Select your attribute</option>
-                    <option *ngFor="let option of optionItems" [ngValue]="option">{{option.title}}
-                    </option>
-                </select>
-                <button (click)="requestAttestation()" class="btn btn-lg btn-block sharp openwallet" type="submit"
-                    [disabled]="loading">Request attribute</button>
+<div class="subpage nav-compact">
+    <!-- COMPACT TOP NAV -->
+    <header>
+        <div class="content">
+            <div class="back-arrow">
+                <a routerLink="/attestations">
+                    <span class="fas fa-chevron-left"></span>
+                </a>
             </div>
-            <div *ngIf="loading" class="spinner">
-                <div class="bounce1"></div>
-                <div class="bounce2"></div>
-                <div class="bounce3"></div>
+            <div class="page-title">
+                Request Credential
+            </div>
+            <div class="burger-menu" (click)="globals.menuOpen = true">
+                <span class="fas fa-bars"></span>
             </div>
         </div>
-        <br>
-        <div *ngIf="error_msg == ''" class="alert alert-success">
-            <strong>Attestation successfully created!</strong> Go to the view tab to view all of your attestations.
-        </div>
-        <div *ngIf="error_msg" class="alert alert-danger">
-            <strong>Error while creating attestation!</strong> {{ error_msg }}
-        </div>
-        <tr *ngIf="selected_provider">
-            <td><i class="glyphicon" [ngClass]="providerOnline() > -1 ?
-                                                'glyphicon-ok-circle' : 'glyphicon-remove-circle'"></i></td>
-            <td>Trusted party online</td>
-        </tr>
+
+        <div class="background"></div>
+    </header>
+
+    <div class="after-header"> </div>
+
+    <main class="text-center">
+        <h1>Request new credentials</h1>
+        <p>Please pick a provider and the credential you wish to obtain.</p>
+
+        <select [(ngModel)]="selected_provider" required (change)="handleProviderSelected()">
+        <option [ngValue]="undefined" disabled selected hidden>Select your attestation provider</option>
+        <option *ngFor="let provider of providers" [ngValue]="provider">
+            {{provider.title}}</option>
+    </select>
+        <select [(ngModel)]="selected_option" required>
+        <option [ngValue]="undefined" disabled selected hidden>Select your attribute</option>
+        <option *ngFor="let option of optionItems" [ngValue]="option">{{option.title}}
+        </option>
+    </select>
+        <br/>
+        <br/>
+        <p *ngIf="providerOnline() < 0">This provider seems to be offline..</p>
+        <button (click)="requestAttestation()" class="btn primary" type="submit" [disabled]="loading && providerOnline() > -1">Request attribute</button>
+    </main>
+
+    <div *ngIf="loading" class="spinner">
+        <div class="bounce1"></div>
+        <div class="bounce2"></div>
+        <div class="bounce3"></div>
+    </div>
+
+    <div class="bottom-tools">
+        <a class="fab-btn primary bottom-center" style="font-size: 3em" href="scan-qr.html">
+            <img src="./assets/images/qr-scan.svg" alt="" style="width:50%">
+        </a>
     </div>
 </div>

@@ -1,17 +1,20 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { GlobalsService } from '../shared/globals.service';
 import { TasksService } from '../shared/tasks.service';
 
 @Component({
     selector: 'app-message',
     templateUrl: 'message.component.html',
-    styleUrls: ['./message.component.css']
+    styleUrls: []
 })
 
 export class MessageComponent implements OnInit, OnDestroy {
 
     message = '';
 
-    constructor(private tasksService: TasksService) { }
+    constructor(
+        public globals: GlobalsService,
+        private tasksService: TasksService) { }
 
     ngOnInit() {
         this.message = this.tasksService.message;
