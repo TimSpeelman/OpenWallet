@@ -1,16 +1,20 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
 import { AttributesService } from '../shared/attributes.service';
+import { GlobalsService } from '../shared/globals.service';
 import { OpenWalletService } from '../shared/openwallet.service';
 import { ProvidersService } from '../shared/providers.service';
+import { LocalAttribute } from '../shared/state';
 import { AttributeShareRequest, TasksService } from '../shared/tasks.service';
+import { memoizeBinary } from '../shared/util/memoizeFn';
 
 @Component({
     selector: 'app-share-request',
     templateUrl: 'share-request.component.html',
-    styleUrls: ['./share-request.component.css']
+    styleUrls: []
 })
 export class ShareRequestComponent implements OnInit, OnDestroy {
+    lang = 'nl_NL';
     loading;
     error_msg;
     show_password = false;
@@ -20,14 +24,20 @@ export class ShareRequestComponent implements OnInit, OnDestroy {
 
     constructor(
         private tasksService: TasksService,
+        public globals: GlobalsService,
         private attributesService: AttributesService,
         private providersService: ProvidersService,
         private walletService: OpenWalletService) {
 
+        this.pickAttrs = memoizeBinary(this.pickAttrs, this);
     }
 
     get receiverName() {
         return this.request.receiver;
+    }
+
+    get receiver() {
+        return this.providersService.providers[this.request.receiver];
     }
 
     get attributeValues() {
@@ -36,9 +46,18 @@ export class ShareRequestComponent implements OnInit, OnDestroy {
     }
 
     get attributes() {
-        return this.request.attributeNames.map(a => ({
-            name: a, value: this.attributeValues[a]
-        })); // FIXME, add value
+        return this.pickAttrs(this.attributesService.attributes, this.request.attributeNames);
+    }
+
+
+    getProviderLogoUrl(providerMid: string) {
+        const provider = Object.values(this.providersService.providers)
+            .find((p) => p.mid_b64 === providerMid);
+        return provider ? provider.logo_url : '';
+    }
+
+    pickAttrs(attributes: LocalAttribute[], attrNames: string[]) {
+        return attrNames.map(name => attributes.find(a => name === a.name));
     }
 
     get receiverLogoUrl() {

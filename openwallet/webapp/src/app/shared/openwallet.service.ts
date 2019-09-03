@@ -5,7 +5,7 @@ import { AttributesService } from './attributes.service';
 import { OWClientProvider } from './ow-client.provider';
 import { ProvidersService } from './providers.service';
 import { LocalAttribute } from './state';
-import { Attribute } from './tasks.service';
+import { AttributeNV } from './tasks.service';
 
 @Injectable()
 export class OpenWalletService {
@@ -14,12 +14,23 @@ export class OpenWalletService {
         private providersService: ProvidersService,
         private attributesService: AttributesService,
         private clientProvider: OWClientProvider) {
+
+        this.setupVerification();
+    }
+
+    async setupVerification() {
+        const client = await this.clientProvider.getClient();
+        const verif = client.verifieeService;
+        verif.onNonStagedRequest(function (...args) {
+            console.log('Non staged request', args);
+            return Promise.resolve(false);
+        });
     }
 
     async requestOWAttestSharingApproved(
         providerId: string,
         procedureId: string,
-        onConsent: (data: Attribute[]) => Promise<boolean>
+        onConsent: (data: AttributeNV[]) => Promise<boolean>
     ): Promise<LocalAttribute[]> {
         const provider = this.providersService.providers[providerId];
         const procedure = provider.procedures[procedureId];
@@ -69,7 +80,7 @@ export interface AttestationRequest {
 }
 
 export interface AttestationResult {
-    attributes: Attribute[];
+    attributes: AttributeNV[];
     provider: string;
     reason: string;
 }

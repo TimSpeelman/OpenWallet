@@ -1,0 +1,59 @@
+<div class="subpage nav-compact">
+
+    <!-- COMPACT TOP NAV -->
+    <header>
+        <div class="content">
+            <div class="back-arrow">
+                <a routerLink="/create">
+                    <span class="fas fa-chevron-left"></span>
+                </a>
+            </div>
+            <div class="page-title">
+                Verification Request
+            </div>
+            <div class="burger-menu" (click)="globals.menuOpen = true">
+                <span class="fas fa-bars"></span>
+            </div>
+        </div>
+
+        <div class="background"></div>
+    </header>
+
+    <div class="after-header"> </div>
+
+    <main class="text-center" *ngIf="request">
+        <h1>Someone wishes to verify</h1>
+        <p>
+            {{ request.mid }} wishes to verify your information:
+        </p>
+        <div class="card-item clickable">
+            <div class="row">
+                <div class="logo-box">
+                    <img src="{{ getProviderLogoUrl(attribute.signer_mid_b64) }}" />
+                </div>
+                <div class="text-box">
+                    <div class="primary">{{ attribute.title[lang] }}</div>
+                    <div class="secondary">{{ attribute.provider_title[lang] }}</div>
+                </div>
+            </div>
+            <div class="credential-details">
+                <div class="row">
+                    <div class="text-box">
+                        <div class="primary">{{ attribute.title[lang] }}</div>
+                        <div class="secondary">{{ attribute.value }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <p>Do you wish to share these credentials?</p>
+        <button class="btn primary" (click)="confirmRequest()" [disabled]="loading">Share and continue</button>
+        <button class="btn secondary" (click)="denyRequest()" [disabled]="loading">Cancel</button>
+    </main>
+
+    <div *ngIf="loading" class="spinner">
+        <div class="bounce1"></div>
+        <div class="bounce2"></div>
+        <div class="bounce3"></div>
+    </div>
+
+</div>

@@ -1,8 +1,11 @@
 import { Injectable } from '@angular/core';
-import { AttributesService } from './attributes.service';
+import { ServerDescriptor } from '@tsow/ow-attest';
+import { AttestedAttribute, AttributesService } from './attributes.service';
+import { IPv8Service } from './ipv8.service';
 import { OpenWalletService } from './openwallet.service';
 import { ProvidersService } from './providers.service';
 import { LocalAttribute } from './state';
+import { Dict } from './types/Dict';
 
 let i = 0;
 function newUUID() {
@@ -12,6 +15,9 @@ function newUUID() {
 const SHARE_PAGE = '#/share-request';
 const RECEIVE_PAGE = '#/receive-attributes';
 const MESSAGE_PAGE = '#/message';
+const CONFIRM_CONTACT_PAGE = '#/confirm-contact';
+const CONFIRM_INCOMING_VERIFY_PAGE = '#/confirm-verify';
+const CONTACTS_PAGE = '#/contacts';
 
 export interface AttributeRequest {
     id: string;
@@ -28,7 +34,13 @@ export interface AttributeShareRequest {
     done: (consent: boolean) => void;
 }
 
-export interface Attribute {
+export interface AttributeDetailed {
+    name: string;
+    value: string;
+    title: Dict<string>;
+}
+
+export interface AttributeNV {
     attribute_name: string;
     attribute_value: string;
 }
@@ -36,8 +48,21 @@ export interface Attribute {
 export interface AttributeReceiveRequest {
     id: string;
     provider: string;
-    attributes: Attribute[];
+    attributes: AttributeDetailed[];
     reason: string;
+    done: (consent: boolean) => void;
+}
+
+export interface ContactRequest {
+    id: string;
+    provider: ServerDescriptor;
+    done: (consent: boolean) => void;
+}
+
+export interface IncomingVerifyRequest {
+    id: string;
+    mid: string;
+    attribute: AttestedAttribute;
     done: (consent: boolean) => void;
 }
 
@@ -45,12 +70,15 @@ export interface AttributeReceiveRequest {
 export class TasksService {
 
     receiveRequests: AttributeReceiveRequest[] = [];
+    contactRequests: ContactRequest[] = [];
     shareRequests: AttributeShareRequest[] = [];
+    inVerifyRequests: IncomingVerifyRequest[] = [];
     message = '';
 
     constructor(
         private walletService: OpenWalletService,
         private providersService: ProvidersService,
+        private ipv8Service: IPv8Service,
         private attributesService: AttributesService) { }
 
     showMessage(msg: string) {
@@ -102,7 +130,7 @@ export class TasksService {
         providerKey: string,
         procedureKey: string,
     ): Promise<LocalAttribute[]> {
-        const onConsent = (data) => this.askAttributeOfferConsent(providerKey, data, 'FIXME');
+        const onConsent = (data) => this.askAttributeOfferConsent(providerKey, procedureKey, data, 'FIXME');
         return this.walletService.requestOWAttestSharingApproved(providerKey, procedureKey, onConsent);
     }
 
@@ -156,15 +184,21 @@ export class TasksService {
      */
     askAttributeOfferConsent(
         provider: string,
-        attributes: Attribute[],
+        procedureKey: string,
+        attributes: AttributeNV[],
         reason: string,
     ): Promise<boolean> {
+        const procedure = this.providersService.providers[provider].procedures[procedureKey];
         const { receiveRequests, navigateTo } = this;
         return new Promise(resolve => {
             // Create a new AttribShareReq
             receiveRequests.push({
                 id: newUUID(),
-                attributes,
+                attributes: attributes.map(a => ({
+                    name: a.attribute_name,
+                    value: a.attribute_value,
+                    title: procedure.attributes.find(att => a.attribute_name === att.name).title,
+                })),
                 provider,
                 reason,
                 done: resolve,
@@ -186,6 +220,78 @@ export class TasksService {
         this.receiveRequests = this.receiveRequests.filter(r => r !== req);
         req.done(accept);
     }
+
+    async requestOWServerContact(
+        url: string,
+    ) {
+        const provider = await this.providersService.getByURL(url);
+        const { contactRequests, navigateTo } = this;
+        return new Promise(resolve => {
+            contactRequests.push({
+                id: newUUID(),
+                provider,
+                done: resolve,
+            });
+
+            navigateTo(CONFIRM_CONTACT_PAGE);
+        }).then((r) => {
+            if (r) {
+                this.providersService.addByURL(url);
+                navigateTo(CONTACTS_PAGE);
+
+            }
+        });
+    }
+
+    resolveContactRequest(
+        requestId: string,
+        accept: boolean,
+    ) {
+        const req = this.contactRequests.find(s => s.id === requestId);
+        if (!req) {
+            throw new Error(`Cannot resolve contact-request with id '${requestId}', no such request.`);
+        }
+
+        this.contactRequests = this.contactRequests.filter(r => r !== req);
+        req.done(accept);
+    }
+
+
+    async requestAllowVerify(
+        mid: string,
+        attribute: AttestedAttribute,
+    ) {
+        const { inVerifyRequests, navigateTo } = this;
+        return new Promise(resolve => {
+            inVerifyRequests.push({
+                id: newUUID(),
+                mid,
+                attribute,
+                done: resolve,
+            });
+
+            navigateTo(CONFIRM_INCOMING_VERIFY_PAGE);
+        }).then((r) => {
+            if (r) {
+                this.ipv8Service.acceptVerificationRequest(mid, attribute.name)
+                    .subscribe();
+            }
+        });
+    }
+
+    resolveIncomingVerifyRequest(
+        requestId: string,
+        accept: boolean,
+    ) {
+        const req = this.inVerifyRequests.find(s => s.id === requestId);
+        if (!req) {
+            throw new Error(`Cannot resolve contact-request with id '${requestId}', no such request.`);
+        }
+
+        this.inVerifyRequests = this.inVerifyRequests.filter(r => r !== req);
+        req.done(accept);
+    }
+
 
     navigateTo(url: string) {
         window.location.assign(url);

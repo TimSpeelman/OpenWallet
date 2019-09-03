@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ProcedureDescription, ServerDescriptor } from '@tsow/ow-attest';
+import { GlobalsService } from '../shared/globals.service';
 import { IPv8Service } from '../shared/ipv8.service';
 import { AttestationRequest, OpenWalletService } from '../shared/openwallet.service';
 import { ProvidersService } from '../shared/providers.service';
@@ -12,7 +13,7 @@ const LANG = 'nl_NL'; // FIXME
 @Component({
     selector: 'app-create-attestation',
     templateUrl: 'create-attestation.component.html',
-    styleUrls: ['./create-attestation.component.css']
+    styleUrls: []
 })
 export class CreateAttestationComponent implements OnInit {
     loading;
@@ -24,6 +25,7 @@ export class CreateAttestationComponent implements OnInit {
     display_options: OptionItem[] = [];
 
     constructor(
+        public globals: GlobalsService,
         private walletService: OpenWalletService,
         private ipv8Service: IPv8Service,
         private tasksService: TasksService,
@@ -72,6 +74,7 @@ export class CreateAttestationComponent implements OnInit {
     }
 
     providerOnline() {
+        if (!this.selected_provider) { return null; }
         const id = this.selected_provider.id;
         const mid = this.providersService.providers[id].mid_b64;
         const ipv8Online = mid && this.ipv8Service.peers.indexOf(mid) >= 0;
