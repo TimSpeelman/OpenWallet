@@ -115,3 +115,7 @@ openwallet.json
 *.pem
 *.crt
 temp/
+
+
+# Twistd
+twisted/plugins/dropin.cache

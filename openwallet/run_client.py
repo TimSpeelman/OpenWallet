@@ -9,16 +9,20 @@ from base64 import b64encode
 from binascii import hexlify
 from threading import Thread
 
+sys.path.append(os.path.abspath(os.path.join(
+    os.path.dirname(__file__), '..')))
+    
+from ipv8.configuration import get_default_configuration
+from ipv8.REST.rest_manager import RESTManager as IPv8RESTManager
+from ipv8_service import IPv8
 from twisted.internet import reactor
 from twisted.python import log
 from twisted.web.static import File
 
-from ipv8.configuration import get_default_configuration
-from ipv8.REST.rest_manager import RESTManager as IPv8RESTManager
-from ipv8_service import IPv8
 from openwallet.defs import BASE_DIR, PROVIDERS
 from openwallet.restapi.rest_manager import RESTManager
 from openwallet.restapi.root_endpoint import APIEndpoint
+
 
 
 def main(argv):
@@ -76,7 +80,7 @@ def main(argv):
     rest_manager.root_endpoint.putChild(
         b'gui', File(os.path.join(BASE_DIR, 'webapp', 'dist')))
 
-    print('mid_b64: ' + config['mid_b64'])
+    print('mid_b64: ' + str(config['mid_b64']))
 
     reactor.run()
 

@@ -6,3 +6,4 @@ tabulate
 certvalidator
 tinydb
 pyipv8
+treq 
