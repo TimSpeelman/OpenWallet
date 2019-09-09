@@ -1,0 +1,52 @@
+<div class="subpage nav-compact">
+
+    <!-- COMPACT TOP NAV -->
+    <header>
+        <div class="content">
+            <div class="back-arrow">
+                <a routerLink="/contacts">
+                    <span class="fas fa-chevron-left"></span>
+                </a>
+            </div>
+            <div class="page-title">
+                Add Contact (QR)
+            </div>
+            <div class="burger-menu" (click)="globals.menuOpen = true">
+                <span class="fas fa-bars"></span>
+            </div>
+        </div>
+
+        <div class="background"></div>
+    </header>
+
+    <div class="after-header"> </div>
+
+
+    <main *ngIf="request">
+        <p>Do you trust the following organization?</p>
+
+        <img src="{{ request.provider.logo_url }}" style="width: 20%" />
+        <h1>{{ request.provider.title[lang] }}</h1>
+        <p>{{ request.provider.description[lang] }}</p>
+        <table>
+            <tr>
+                <th>ID</th>
+                <td>{{ request.provider.mid_b64 }}</td>
+            </tr>
+            <tr>
+                <th>Website</th>
+                <td>{{ request.provider.website }}</td>
+            </tr>
+            <tr>
+                <th>Attestation Server URL</th>
+                <td>{{ request.provider.url }}</td>
+            </tr>
+        </table>
+
+        <button class="btn primary" (click)="confirmRequest()" [disabled]="loading">Trust and add to contacts</button>
+        <button class="btn secondary" (click)="denyRequest()" [disabled]="loading">Cancel</button>
+
+
+    </main>
+
+</div>

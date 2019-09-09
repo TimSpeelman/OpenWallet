@@ -8,6 +8,7 @@ import { Mid } from './openwallet.service';
 @Injectable()
 export class OWClientProvider {
 
+    public mid: string;
     private api_base = 'http://localhost:8124/api'; // FIXME
     private _client: AttestationClient;
     private listeners: Array<(client: AttestationClient) => any> = [];
@@ -19,6 +20,7 @@ export class OWClientProvider {
 
     constructor(private http: Http) {
         this.loadMe().subscribe(me => {
+            this.mid = me.mid_b64;
             const config = { ipv8_url: 'http://localhost:8124', mid_b64: me.mid_b64, };
             const factory = new AttestationClientFactory(config);
             this._client = factory.create();

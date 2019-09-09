@@ -1,0 +1,65 @@
+<div class="subpage nav-compact">
+
+    <!-- COMPACT TOP NAV -->
+    <header>
+        <div class="content">
+            <div class="back-arrow">
+                <a routerLink="/contacts">
+                    <span class="fas fa-chevron-left"></span>
+                </a>
+            </div>
+            <div class="page-title">
+                Contact
+            </div>
+            <div class="burger-menu" (click)="globals.menuOpen = true">
+                <span class="fas fa-bars"></span>
+            </div>
+        </div>
+
+        <div class="background"></div>
+    </header>
+
+    <div class="after-header"> </div>
+
+
+    <main *ngIf="provider">
+        <img src="{{ provider.logo_url }}" />
+        <h1>{{ provider.title[lang] }}</h1>
+        <p>{{ provider.description[lang] }}</p>
+        <table>
+            <tr>
+                <th>ID</th>
+                <td>{{ provider.mid_b64 }}</td>
+            </tr>
+            <tr>
+                <th>Website</th>
+                <td>{{ provider.website }}</td>
+            </tr>
+            <tr>
+                <th>Attestation Server URL</th>
+                <td>{{ provider.url }}</td>
+            </tr>
+        </table>
+
+        <h2>Credentials</h2>
+        <p>{{ provider.title[lang] }} offers the following credentials:</p>
+
+        <div class="card-item" *ngFor="let procedure of getProcedures(provider)">
+            <div class="row">
+                <div class="logo-box">
+                    <img src="{{ provider.logo_url }}" />
+                </div>
+                <div class="text-box">
+                    <div class="primary">{{ procedure.title[lang] }}</div>
+                    <div class="secondary">{{ provider.title[lang] }}</div>
+                </div>
+                <div class="tool">
+                    <!-- <div class="clickable" btnlink="./add-credential-details.html">
+                    <span class="fas fa-download"></span>
+                </div> -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+</div>

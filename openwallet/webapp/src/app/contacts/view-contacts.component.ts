@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ServerDescriptor } from '@tsow/ow-attest';
+import { GlobalsService } from '../shared/globals.service';
 import { ProvidersService } from '../shared/providers.service';
 import { TasksService } from '../shared/tasks.service';
 import { Dict } from '../shared/types/Dict';
@@ -12,7 +13,7 @@ declare var window: any;
 @Component({
     selector: 'app-contacts',
     templateUrl: 'view-contacts.component.html',
-    styleUrls: ['./view-contacts.component.css'],
+    styleUrls: [],
 })
 export class ViewContactsComponent implements OnInit, OnDestroy {
     encodeURIComponent = window.encodeURIComponent;
@@ -21,6 +22,7 @@ export class ViewContactsComponent implements OnInit, OnDestroy {
     loading = false;
 
     constructor(
+        public globals: GlobalsService,
         private providersService: ProvidersService,
         private tasksService: TasksService) {
 

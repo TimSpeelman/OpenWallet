@@ -1,9 +1,5 @@
-pycrypto
 Twisted
-tlslite-ng
 requests
-tabulate
-certvalidator
 tinydb
 pyipv8
 treq 

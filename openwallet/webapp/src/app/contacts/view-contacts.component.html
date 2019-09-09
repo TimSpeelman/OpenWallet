@@ -1,57 +1,69 @@
-<div class="row">
-    <div class="col-xs-12">
-        <input type="url" class="form-control" placeholder="Enter the URL of the provider" [(ngModel)]="new_url"
-            required />
-        <button (click)="addContact()" class="btn btn-md" type="submit" [disabled]="loading">Add Contact</button>
-        <div *ngIf="loading" class="spinner">
-            <div class="bounce1"></div>
-            <div class="bounce2"></div>
-            <div class="bounce3"></div>
+<div class="subpage nav-compact">
+
+    <!-- COMPACT TOP NAV -->
+    <header>
+        <div class="content">
+            <div class="back-arrow">
+                <a routerLink="/attestations">
+                    <span class="fas fa-chevron-left"></span>
+                </a>
+            </div>
+            <div class="page-title">
+                Contacts
+            </div>
+            <div class="burger-menu" (click)="globals.menuOpen = true">
+                <span class="fas fa-bars"></span>
+            </div>
         </div>
-    </div>
-</div>
-<div *ngFor="let provider of providers; trackBy: trackByConnID">
-    <div class="panel panel-default bg-light">
-        <div class="panel-body">
+        <!-- <div class="content">
+        <input class="search-box" type="text" placeholder="Search" />
+    </div> -->
+
+        <div class="background"></div>
+    </header>
+
+    <div class="after-header"> </div>
+
+    <!-- CONTENT -->
+    <main>
+
+        <h1>People (0)</h1>
+        <h1>Organisations ({{providers.length}})</h1>
+        <a class="card-item clickable" *ngFor="let provider of providers" [routerLink]="['./' + encodeURIComponent(provider.mid_b64) ]">
             <div class="row">
-                <div class="col-xs-11">
-                    <div class="row">
-                        <div class="col-xs-5 text">Provider</div>
-                        <div class="col-xs-7 text">{{ provider.title[lang] }}</div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-5 text">Description</div>
-                        <div class="col-xs-7 text">{{ provider.description[lang] }}</div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-5 text">Offers</div>
-                        <div class="col-xs-7 text">
-                            <div *ngFor="let procedure of getProcedures(provider); trackBy: trackByConnID">
-                                {{ procedure.title[lang] }} <span *ngIf="procedure.requirements.length > 0">(requires
-                                    {{ procedure.requirements.join(", ") }})</span>
-                                <button (click)="request(provider.id, procedure.procedure_name)">Request</button>
-                            </div>
-                        </div>
-                    </div>
+                <div class="logo-box">
+                    <img src="{{ provider.logo_url }}" />
                 </div>
-                <div class="col-xs-1">
-                    <div class="row">
-                        <a [routerLink]="[encodeURIComponent(provider.hash) + '/qrcode']">
-                            <span class="glyphicon glyphicon-qrcode pull-right"></span>
-                        </a>
-                    </div>
-                    <div class="row">
-                        <a [routerLink]="[encodeURIComponent(provider.hash)]">
-                            <span class="glyphicon glyphicon-info-sign pull-right"></span>
-                        </a>
-                    </div>
-                    <div class="row">
-                        <a (click)="delete($event, provider)">
-                            <span class="glyphicon glyphicon-trash pull-right"></span>
-                        </a>
+                <div class="text-box">
+                    <div class="primary">{{ provider.title[lang] }}</div>
+                </div>
+                <div class="tool">
+                    <div class="clickable">
+                        <span class="fas fa-info-circle"></span>
                     </div>
                 </div>
             </div>
+        </a>
+        <h1>Add By URL</h1>
+        <div class="col-xs-12">
+            <input type="url" class="text-input" placeholder="Enter the URL of the provider" [(ngModel)]="new_url" required />
+            <br/>
+            <br/>
+            <button (click)="addContact()" class="btn btn primary" type="submit" [disabled]="loading">Add Contact</button>
+            <div *ngIf="loading" class="spinner">
+                <div class="bounce1"></div>
+                <div class="bounce2"></div>
+                <div class="bounce3"></div>
+            </div>
         </div>
+    </main>
+    <div class="bottom-tools">
+        <a class="fab-btn primary bottom-center" style="font-size: 3em" routerLink="/scan-qr">
+            <img src="./assets/images/qr-scan.svg" alt="" style="width:50%">
+        </a>
+        <a class="fab-btn secondary bottom-right" style="font-size: 2em" routerLink="/scan-qr">
+            <span class="fas fa-plus"></span>
+        </a>
     </div>
+
 </div>
