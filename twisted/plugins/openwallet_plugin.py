@@ -25,9 +25,13 @@ from openwallet.restapi.root_endpoint import APIEndpoint
 
 sys.path.append(os.path.abspath(os.path.join(
     os.path.dirname(__file__), '..', '..')))
-sys.path.append(os.path.abspath('C:/Users/Tim/Dev/ipv8/pyipv8'))
-sys.path.append(os.path.abspath(
-    'C:/Users/Tim/AppData/Roaming/Python/Python27/site-packages'))
+
+
+# sys.path.append(os.path.abspath(os.path.join(
+#     os.path.dirname(__file__), '..', '..')))
+# sys.path.append(os.path.abspath('C:/Users/Tim/Dev/ipv8/pyipv8'))
+# sys.path.a  ppend(os.path.abspath(
+#     'C:/Users/Tim/AppData/Roaming/Python/Python27/site-packages'))
 
 
 class Options(usage.Options):
@@ -61,16 +65,18 @@ class OpenWalletServiceMaker(object):
             {'alias': "my peer", 'generation': u"medium", 'file': u"temp/ec.pem"}
         ]
 
+        working_directory_overlays = [
+            'AttestationCommunity', 'IdentityCommunity']
+        for overlay in configuration['overlays']:
+            if overlay['class'] in working_directory_overlays:
+                overlay['initialize'] = {'working_directory': 'temp'}
+
         self.ipv8 = IPv8(configuration)
 
-        config = {
-            'mid_b64': b64encode(self.ipv8.keys["anonymous id"].mid),
-        }
-        rest_manager = IPv8RESTManager(self.ipv8)
-        rest_manager.start(int(options["port"]))
-        rest_manager.root_endpoint.putChild(b'api', APIEndpoint(config))
-        rest_manager.root_endpoint.putChild(
-            b'gui', File(os.path.join(BASE_DIR, 'webapp', 'dist')))
+        self.restapi = IPv8RESTManager(self.ipv8)
+        self.port = options["port"]
+
+        reactor.callLater(0.0, self.startApi)
 
         def signal_handler(sig, _):
             msg("Received shut down signal %s" % sig)
@@ -84,10 +90,20 @@ class OpenWalletServiceMaker(object):
         signal.signal(signal.SIGTERM, signal_handler)
 
         msg("Starting OpenWallet and IPv8")
+        msg("Python Version: " + sys.version)
+
+    def startApi(self):
+        config = {
+            'mid_b64': b64encode(self.ipv8.keys["anonymous id"].mid),
+        }
+        self.restapi.start(int(self.port))
+        self.restapi.root_endpoint.putChild(b'api', APIEndpoint(config))
+        self.restapi.root_endpoint.putChild(
+            b'gui', File(os.path.join(BASE_DIR, 'webapp', 'dist')))
 
     def makeService(self, options):
         """
-        Construct a IPv8 service.
+        Construct an OpenWallet service.
         """
         ow_service = MultiService()
         ow_service.setName("OpenWallet")

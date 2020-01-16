@@ -15,10 +15,8 @@ class APIEndpoint(resource.Resource):
 
     def __init__(self, config):
         resource.Resource.__init__(self)
-        self.putChild("attestations", AttestationEndpoint(config))
-        self.putChild("providers", ProviderEndpoint())
-        self.putChild("me", MeEndpoint(config))
-        self.putChild("state", StateEndpoint(config))
+        self.putChild(b"me", MeEndpoint(config))
+        self.putChild(b"state", StateEndpoint(config))
 
 
 class RootEndpoint(resource.Resource):
@@ -30,5 +28,5 @@ class RootEndpoint(resource.Resource):
         resource.Resource.__init__(self)
 
         self.putChild('', Redirect('/gui'))
-        self.putChild('api', APIEndpoint(providers))
-        self.putChild('gui', File(os.path.join(BASE_DIR, 'webapp', 'dist')))
+        self.putChild(b'api', APIEndpoint(providers))
+        self.putChild(b'gui', File(os.path.join(BASE_DIR, 'webapp', 'dist')))

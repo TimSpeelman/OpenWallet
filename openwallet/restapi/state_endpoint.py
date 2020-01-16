@@ -5,11 +5,14 @@ from base64 import urlsafe_b64decode
 
 from twisted.web import http, resource
 
+from .base_endpoint import BaseEndpoint
 
-class StateEndpoint(resource.Resource):
+
+class StateEndpoint(BaseEndpoint):
 
     def __init__(self, config):
-        resource.Resource.__init__(self)
+        super(StateEndpoint, self).__init__()
+
         self.logger = logging.getLogger(self.__class__.__name__)
         self.config = config
 
@@ -18,16 +21,16 @@ class StateEndpoint(resource.Resource):
         request.setHeader('Access-Control-Allow-Methods',
                           'GET, PUT')
         request.setHeader('Access-Control-Allow-Headers', 'content-type')
-        return json.dumps({"fine": "fine"})
+        return self.twisted_dumps({"fine": "fine"})
 
     def render_GET(self, request):
         with open('temp/state.json', 'r') as infile:
             data = json.load(infile)
-        return json.dumps(data)
+        return self.twisted_dumps(data)
 
     def render_PUT(self, request):
         data = json.loads(request.content.read())
         with open('temp/state.json', 'w') as outfile:
             json.dump(data, outfile)
 
-        return json.dumps({"success": True})
+        return self.twisted_dumps({"success": True})

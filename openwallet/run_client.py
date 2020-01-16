@@ -20,7 +20,6 @@ from twisted.python import log
 from twisted.web.static import File
 
 from openwallet.defs import BASE_DIR, PROVIDERS
-from openwallet.restapi.rest_manager import RESTManager
 from openwallet.restapi.root_endpoint import APIEndpoint
 
 
