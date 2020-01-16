@@ -37,14 +37,18 @@
         <br/>
         <br/>
         <p *ngIf="providerOnline() < 0">This provider seems to be offline..</p>
-        <button (click)="requestAttestation()" class="btn primary" type="submit" [disabled]="loading && providerOnline() > -1">Request attribute</button>
+        <button (click)="requestAttestation()" class="btn primary" type="submit" [disabled]="loading && providerOnline() > -1">
+            <span>Request attribute</span>
+            <div class="lds-ellipsis">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </button>
     </main>
 
-    <div *ngIf="loading" class="spinner">
-        <div class="bounce1"></div>
-        <div class="bounce2"></div>
-        <div class="bounce3"></div>
-    </div>
+
 
     <div class="bottom-tools">
         <a class="fab-btn primary bottom-center" style="font-size: 3em" href="scan-qr.html">
