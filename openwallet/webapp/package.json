@@ -28,7 +28,7 @@
     "bootstrap": "^3.3.7",
     "core-js": "^2.4.1",
     "express": "^4.17.1",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.21",
     "ng2-bootstrap": "^1.4.0",
     "ng2-qrcode": "^0.1.1",
     "rxjs": "^5.1.0",
